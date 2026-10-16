@@ -114,6 +114,16 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Immer 2–3 Emojis → ein Begriff. Alle raten gleichzeitig, mehrere Versuche erlaubt. Richtig: 1. +5, 2. +3, 3. +2, danach +1. Falsche Tipps sehen alle, „ganz nah dran“ ohne Text. Nach 40 % der Zeit Lücken (Buchstabenzahl), nach 70 % der erste Buchstabe. Sind alle fertig, kommt die Auflösung (5 s), dann das nächste Rätsel.
 - Rätsel (138 Stück) in `lib/emojiPuzzles.js` als [Emojis, Lösung, [weitere Antworten]] – einfach erweitern. Antwortprüfung ignoriert Artikel und einen Tippfehler (`checkEmoji` in `lib/emoji.js`). Oberfläche `components/EmojiRoom.js`.
 
+## Schätz-Duell (fertig)
+
+- Spielezentrale → **📱 Ein Handy** oder **🌐 Online** (`game: 'estimate'`), ab 2 Spielern. Host wählt Modus, 5/8/10/15 Fragen, 20/30/45 s pro Frage (nur online) und Themen.
+- **Alle gegen alle:** jeder schätzt, Rangliste nach Abstand: +5 / +3 / +2, gleicher Abstand = gleicher Platz.
+- **Duelle 1 gegen 1:** pro Frage zwei Spieler (wer am wenigsten dran war, möglichst nicht dasselbe Paar zweimal hintereinander). Näher dran +5, Gleichstand je +3. Alle anderen wetten vorher: richtig +2 (bei Gleichstand +1).
+- Exakt getroffen +3 Bonus. **Doppelt-Joker:** einmal pro Spiel Punkte einer Frage ×2 (auch für Wetten).
+- Zahleneingabe versteht deutsche Formate („13.200“, „5,5“) und zeigt eine Vorschau (`parseNum`).
+- **Nur feste, geprüfte Fragen** (81 Stück, 7 Themen) in `lib/estimateQuestions.js` – Jonas wollte hier ausdrücklich keine KI-Fragen. Format [Frage, Zahl, Einheit, Erklärung]; Einheit `'Jahr'` = Jahreszahl.
+- Regeln `lib/estimate.js`, Oberfläche `components/EstimateRoom.js`, Ein Handy `components/EstimateLocal.js`, gemeinsame Teile `components/EstimateParts.js`.
+
 ## Spielideen-Abstimmung (Spielezentrale)
 
 - Oben in der Spielezentrale (`components/IdeaBoard.js`): Ideen antippen = Stimme, beliebig viele pro Person, eigene Ideen schreiben (max. 10 pro Person, eigene wieder löschbar).

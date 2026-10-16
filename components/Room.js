@@ -14,6 +14,7 @@ import MemeRoom from './MemeRoom';
 import DrawRoom from './DrawRoom';
 import BluffRoom from './BluffRoom';
 import EmojiRoom from './EmojiRoom';
+import EstimateRoom from './EstimateRoom';
 
 export default function Room({ code, me, isCreator, game, onLeave, onEditProfile }) {
   const room = useRoom({ code, me, isCreator, game });
@@ -72,6 +73,8 @@ export default function Room({ code, me, isCreator, game, onLeave, onEditProfile
         <h2>Verbinde mit Raum {code} …</h2>
       </div>
     );
+  } else if (state.game === 'estimate') {
+    body = <EstimateRoom room={room} me={me} code={code} />;
   } else if (state.game === 'emoji') {
     body = <EmojiRoom room={room} me={me} code={code} />;
   } else if (state.game === 'bluff') {

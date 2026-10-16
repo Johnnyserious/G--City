@@ -54,6 +54,12 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal }) {
           <h3>Lügen-Quiz</h3>
           <p>Erfinde eine Antwort, die echt klingt, und find die Wahrheit zwischen den Lügen.</p>
         </button>
+        <button className="game-card g-est" onClick={() => { sfx.pick(); setChoose('estimate'); }}>
+          <span className="tag">▶ Neu</span>
+          <span className="emoji">📏</span>
+          <h3>Schätz-Duell</h3>
+          <p>Wie hoch ist der Kölner Dom? Wer am nächsten dran ist, holt die Punkte – alle gegen alle oder im Duell.</p>
+        </button>
         <button className="game-card g-emoji" onClick={() => { sfx.pick(); onCreate('emoji'); }}>
           <span className="tag">▶ Neu</span>
           <span className="emoji">🦁</span>
@@ -84,7 +90,7 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal }) {
         <div className="overlay" onClick={() => setChoose(null)}>
           <div className="qcard stack" onClick={(e) => e.stopPropagation()}>
             <div className="row between">
-              <h2 style={{ fontSize: 30 }}>{choose === 'bluff' ? '🤥 Lügen-Quiz' : '🕵️ Imposter'}</h2>
+              <h2 style={{ fontSize: 30 }}>{{ bluff: '🤥 Lügen-Quiz', estimate: '📏 Schätz-Duell', imposter: '🕵️ Imposter' }[choose]}</h2>
               <button className="icon-btn" onClick={() => setChoose(null)} aria-label="Schließen">✕</button>
             </div>
             <p className="muted" style={{ margin: 0, fontWeight: 700 }}>Wie wollt ihr spielen?</p>
@@ -95,7 +101,7 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal }) {
             </button>
             <button className="mode-card" style={{ width: '100%' }} onClick={() => { sfx.pick(); setChoose(null); onCreate(choose); }}>
               <div className="big">🌐 Online</div>
-              <div style={{ fontWeight: 800 }}>{choose === 'bluff' ? 'Jeder an seinem eigenen Handy, mit Timer und Raum-Code.' : 'Jeder an seinem eigenen Handy, Wörter werden eingetippt.'}</div>
+              <div style={{ fontWeight: 800 }}>{choose === 'imposter' ? 'Jeder an seinem eigenen Handy, Wörter werden eingetippt.' : 'Jeder an seinem eigenen Handy, mit Timer und Raum-Code.'}</div>
               <div className="muted" style={{ fontSize: 13, fontWeight: 700 }}>Mit Raum-Code, Chat und Abstimmung.</div>
             </button>
           </div>

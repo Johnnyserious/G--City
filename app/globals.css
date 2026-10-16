@@ -448,3 +448,15 @@ textarea.input { resize: vertical; font-size: 16px; }
 .emoji-card { padding: 22px 14px; }
 .emoji-big { font-size: clamp(64px, 20vw, 110px); line-height: 1.15; letter-spacing: 6px; margin-bottom: 10px; animation: zoomIn .4s cubic-bezier(.3,1.5,.5,1) both; }
 .score-item.solved { border-color: var(--green); }
+
+/* ---------- Schätz-Duell ---------- */
+.g-est { background: linear-gradient(135deg, #2ee6c5, #ff8a3d); color: #13200f; }
+.est-input { font-family: var(--display); font-size: 28px; letter-spacing: 1px; }
+.est-unit { font-weight: 900; font-size: 18px; color: var(--muted); min-width: 30px; }
+.est-answer { font-size: 44px; color: var(--yellow); line-height: 1.1; }
+.joker-toggle { background: #120b30; border: 3px dashed var(--purple); border-radius: 14px; padding: 10px 12px; font-weight: 900; font-size: 15px; }
+.joker-toggle.on { background: linear-gradient(160deg, #6a4cff, #b388ff); border: 3px solid var(--yellow); color: #fff; }
+.duel-head { display: flex; align-items: center; justify-content: space-around; gap: 10px; padding: 12px; }
+.duel-head > span { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 14px; }
+.duel-bets { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mode-card:disabled { opacity: .6; cursor: default; }
