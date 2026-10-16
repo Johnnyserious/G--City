@@ -4,15 +4,17 @@ export const maxDuration = 30;
 export const dynamic = 'force-dynamic';
 
 const LEVELS = {
-  1: 'sehr leicht – fast jeder Erwachsene weiß das',
-  2: 'leicht – gutes Allgemeinwissen',
-  3: 'mittel – etwa die Hälfte der Leute weiß es',
-  4: 'schwer – nur Leute mit gutem Wissen in dem Thema',
-  5: 'sehr schwer – echte Kenner-Frage, aber trotzdem fair und eindeutig',
+  1: 'SUPER LEICHT – das weiß praktisch jeder zwischen 18 und 30, auch ohne Interesse am Thema. Eher ein Lacher als eine Hürde. Beispiele für dieses Niveau: "Welche Farbe hat das Logo von Coca-Cola?", "Wie viele Spieler hat eine Fußballmannschaft auf dem Feld?", "Wie heißt der Klempner aus den Nintendo-Spielen?"',
+  2: 'LEICHT – die meisten aus der Gruppe wissen es sofort, wenn sie kurz nachdenken. Bekannte Marken, Stars, Basics.',
+  3: 'MITTEL – ungefähr die Hälfte der Gruppe weiß es. Man braucht etwas Interesse am Thema.',
+  4: 'SCHWER – nur wer sich wirklich für das Thema interessiert, kennt die Antwort.',
+  5: 'SEHR SCHWER – echtes Fan- oder Nerdwissen, an dem auch Kenner knabbern. Trotzdem fair, eindeutig und keine reine Zahlen-Raterei.',
 };
 
-const SYSTEM = `Du bist Quizmaster einer Quiz-Show für eine Gruppe junger Erwachsener in Deutschland.
-Du erstellst genau EINE Allgemeinwissens-Frage auf Deutsch.
+const SYSTEM = `Du bist Quizmaster einer lockeren Quiz-Show für eine Gruppe Jungs zwischen 18 und 30 in Deutschland.
+Du erstellst genau EINE Quizfrage auf Deutsch.
+Stil: unterhaltsam, nah an ihrem Leben (Popkultur, Sport, Autos, Musik, Internet, Marken, Essen, Party, Reisen), kein trockenes Schulwissen. Lieber "Ach klar!"-Momente als Prüfungsgefühl.
+Halte dich STRENG an die verlangte Schwierigkeit. Beispiele in der Schwierigkeitsbeschreibung zeigen nur das Niveau – stell sie nie selbst. Im Zweifel lieber eine Spur leichter als zu schwer – außer bei Stufe 5.
 Regeln:
 - Die Fakten müssen absolut korrekt und eindeutig sein. Im Zweifel nimm eine andere Frage.
 - Die Antwort ist kurz (1–4 Wörter oder eine Zahl).
