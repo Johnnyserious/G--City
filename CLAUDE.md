@@ -85,6 +85,14 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Online: Raum wird mit `game: 'imposter'` erstellt (`sessionStorage qa_game_CODE`), `lib/room.js` leitet Aktionen an `imposterAction`, Timer an `imposterTick` weiter. Oberfläche: `components/ImposterRoom.js`.
 - Ein Handy: `components/ImposterLocal.js`, läuft komplett im Browser ohne Supabase. Spielerliste wird in localStorage (`imp_local`) gemerkt.
 
+## Make it Meme (fertig)
+
+- Online mit Raum-Code (`game: 'meme'`). Host stellt 3/5/7 Runden und 60/90/120 s Schreibzeit ein. Mindestens 3 Spieler.
+- Ablauf pro Runde: Jeder bekommt eine eigene Vorlage (1× neu würfeln), schreibt Text oben/unten → alle Memes anonym nacheinander (25 s je Meme): 1–5 Sterne + raten, von wem es ist → Auflösung mit Zwischenstand. Am Ende gewinnen alle mit der höchsten Punktzahl (Gleichstand = mehrere Sieger).
+- Punkte: Sterne gehen an den Ersteller, richtig geraten +3.
+- Vorlagen: `GET /api/memes` lädt ~100 Vorlagen von api.imgflip.com (1× pro Tag), Ersatzliste in `lib/memeTemplates.js`. Bilder kommen direkt von i.imgflip.com.
+- Regeln `lib/meme.js` (`memeAction`, `memeTick`), Oberfläche `components/MemeRoom.js`, Meme-Darstellung `components/MemeImage.js` (Schrift Anton, wie Impact).
+
 ## Spielideen-Abstimmung (Spielezentrale)
 
 - Oben in der Spielezentrale (`components/IdeaBoard.js`): Ideen antippen = Stimme, beliebig viele pro Person, eigene Ideen schreiben (max. 10 pro Person, eigene wieder löschbar).

@@ -48,6 +48,12 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal }) {
           <h3>Imposter</h3>
           <p>Einer kennt das Wort nicht. Oder mehrere. Oder keiner.</p>
         </button>
+        <button className="game-card g-meme" onClick={() => { sfx.pick(); onCreate('meme'); }}>
+          <span className="tag">▶ Neu</span>
+          <span className="emoji">😂</span>
+          <h3>Make it Meme</h3>
+          <p>Jeder betextet ein Meme, dann wird bewertet und geraten, von wem es ist.</p>
+        </button>
         <button className="game-card g-panto locked" onClick={() => soon('Pantomime')}>
           <span className="tag">🔒 Bald</span>
           <span className="emoji">🎭</span>

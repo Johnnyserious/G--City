@@ -10,6 +10,7 @@ import EndScreen from './EndScreen';
 import Chat from './Chat';
 import Scorebar from './Scorebar';
 import ImposterRoom from './ImposterRoom';
+import MemeRoom from './MemeRoom';
 
 export default function Room({ code, me, isCreator, game, onLeave, onEditProfile }) {
   const room = useRoom({ code, me, isCreator, game });
@@ -68,6 +69,8 @@ export default function Room({ code, me, isCreator, game, onLeave, onEditProfile
         <h2>Verbinde mit Raum {code} …</h2>
       </div>
     );
+  } else if (state.game === 'meme') {
+    body = <MemeRoom room={room} me={me} code={code} />;
   } else if (state.game === 'imposter') {
     body = <ImposterRoom room={room} me={me} code={code} />;
   } else if (state.phase === 'lobby') {

@@ -367,3 +367,29 @@ h1, h2, h3, .display { font-family: var(--display); font-weight: 400; letter-spa
 .idea-del { position: absolute; top: 46px; right: 10px; width: 28px; height: 28px; border-radius: 9px; background: #0005; font-size: 12px; }
 .idea-error { background: rgba(255, 77, 94, .16); border: 2px solid var(--red); border-radius: 14px; padding: 10px 12px; font-weight: 800; font-size: 14px; }
 textarea.input { resize: vertical; font-size: 16px; }
+
+/* ---------- Make it Meme ---------- */
+.g-meme { background: linear-gradient(135deg, #ffd23f, #ff8a3d); color: #2a1600; }
+.meme { position: relative; display: inline-block; width: 100%; container-type: inline-size; border-radius: 14px; overflow: hidden; background: #000; box-shadow: 0 8px 24px rgba(0,0,0,.4); vertical-align: top; }
+.meme img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; user-select: none; }
+.meme-text {
+  position: absolute; left: 3%; right: 3%; text-align: center; text-transform: uppercase; line-height: 1.08;
+  font-family: 'Anton', Impact, 'Arial Black', sans-serif; color: #fff; letter-spacing: .5px; overflow-wrap: anywhere;
+  -webkit-text-stroke: .35cqw #000; paint-order: stroke fill;
+  text-shadow: 0 0 .6cqw #000, .3cqw .3cqw 0 #000, -.3cqw -.3cqw 0 #000, .3cqw -.3cqw 0 #000, -.3cqw .3cqw 0 #000;
+}
+.meme-text.top { top: 2.5%; }
+.meme-text.bottom { bottom: 2.5%; }
+.meme-broken { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: #fff; font-weight: 800; padding: 10px; background: #222; }
+.stars { display: flex; gap: 6px; justify-content: space-between; }
+.star { flex: 1; font-size: 38px; line-height: 1; padding: 8px 0; border-radius: 14px; background: #120b30; color: #ffffff30; transition: transform .1s, color .15s; }
+.star.on { color: var(--yellow); text-shadow: 0 3px 0 #b88a00; }
+.star:active { transform: scale(1.2); }
+.guess-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; }
+.guess-btn { background: #120b30; border-radius: 14px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 3px solid transparent; font-weight: 800; font-size: 12px; }
+.guess-btn span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.guess-btn.on { border-color: var(--teal); background: #1d3a6e; }
+.meme-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.meme-result { text-align: center; padding: 12px; }
+.meme-result .row { text-align: left; }
+.meme-result.best { outline: 3px solid var(--yellow); }
