@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRoom } from '@/lib/room';
 import { sfx, isMuted, setMuted } from '@/lib/sound';
+import { supabaseDiag } from '@/lib/supabase';
 import Lobby from './Lobby';
 import Board from './Board';
 import QuestionOverlay from './QuestionOverlay';
@@ -41,7 +42,12 @@ export default function Room({ code, me, isCreator, onLeave, onEditProfile }) {
       <div className="card center stack" style={{ marginTop: 40 }}>
         <div style={{ fontSize: 60 }}>📡</div>
         <h2>Keine Verbindung</h2>
-        <p className="muted">Die Live-Verbindung klappt gerade nicht. Prüf dein Internet und lad die Seite neu.</p>
+        <p className="muted">Die Live-Verbindung zu Supabase klappt nicht. Schick Claude einen Screenshot von diesem Kasten.</p>
+        <div className="answer-box" style={{ textAlign: 'left', fontSize: 13, fontFamily: 'monospace', wordBreak: 'break-all' }}>
+          <div>Server: {supabaseDiag().host}</div>
+          <div>Schlüssel-Typ: {supabaseDiag().kind}</div>
+          <div>Fehler: {room.connError || 'keine Antwort (Zeitüberschreitung)'}</div>
+        </div>
         <button className="btn" onClick={() => window.location.reload()}>Neu laden</button>
       </div>
     );
