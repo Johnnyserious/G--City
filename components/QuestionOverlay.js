@@ -40,6 +40,15 @@ export default function QuestionOverlay({ room, me }) {
     return () => clearInterval(t);
   }, [c.status]);
 
+  // Neue Frage (z. B. nach Tausch-Joker): Eingabe leeren
+  const qText = c.q?.question;
+  useEffect(() => {
+    if (!qText) return;
+    setText('');
+    lastTick.current = null;
+    setTimeout(() => inputRef.current?.focus(), 100);
+  }, [qText]);
+
   // Effekte bei Statuswechsel
   useEffect(() => {
     if (lastStatus.current === c.status) return;
@@ -102,7 +111,7 @@ export default function QuestionOverlay({ room, me }) {
 
         {c.q && c.status !== 'loading' && c.status !== 'error' && (
           <>
-            <div className="qtext">{c.q.question}</div>
+            <div className="qtext" key={c.q.question} style={{ animation: 'popIn .35s both' }}>{c.q.question}</div>
 
             {c.status === 'asking' && (
               <div className="timer"><div style={{ width: pct + '%', background: barColor }} /></div>

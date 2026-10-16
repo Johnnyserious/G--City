@@ -1,12 +1,10 @@
 # G City
 
-Spieleabend-App für die Gruppe: Spielezentrale, Avatar-Baukasten, Räume per Code, Quiz-Board mit KI-Fragen, Joker, Veto, Revanche-Vote und Live-Chat.
+Spieleabend-App für die Gruppe: Spielezentrale, Avatar-Baukasten, Räume per Code, Quiz-Board mit Fragen-Datenbank, Joker, Veto, Revanche-Vote und Live-Chat.
 
-## Umgebungsvariablen (in Vercel eintragen)
-- `ANTHROPIC_API_KEY` – Schlüssel aus console.anthropic.com
-- `NEXT_PUBLIC_SUPABASE_URL` – aus Supabase → Connect
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` (oder `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) – aus Supabase → Connect
-- optional `ANTHROPIC_MODEL` – Standard: `claude-haiku-5-5`
+Alle technischen Details stehen in **CLAUDE.md**.
 
-## Lokal testen ohne Konten
-`NEXT_PUBLIC_MOCK=1 npm run build && MOCK_AI=1 npm start` – dann mehrere Tabs öffnen (jeder Tab = eigener Spieler).
+## Einrichtung
+1. Supabase → SQL Editor → Inhalt von `supabase/setup.sql` ausführen.
+2. Vercel → Environment Variables: `ANTHROPIC_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (oder `..._PUBLISHABLE_KEY`), `SUPABASE_SECRET_KEY` → Redeploy.
+3. `/admin` öffnen → Startpaket auffüllen.

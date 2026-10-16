@@ -66,6 +66,9 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin }) {
           <button className="btn teal" disabled={code.length !== 4} onClick={() => { sfx.join(); onJoin(code); }}>Rein ➜</button>
         </div>
       </div>
+      <div className="center" style={{ marginTop: 18 }}>
+        <a href="/admin" className="muted" style={{ fontWeight: 800, fontSize: 14 }}>⚙️ Fragen-Datenbank</a>
+      </div>
     </div>
   );
 }
