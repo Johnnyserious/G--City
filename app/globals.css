@@ -320,7 +320,7 @@ h1, h2, h3, .display { font-family: var(--display); font-weight: 400; letter-spa
 .dots { color: var(--yellow); animation: pulse 1s infinite; display: inline-block; }
 
 .seg { display: flex; gap: 6px; }
-.seg.wrap { flex-wrap: wrap; }
+.seg.seg-wrap { flex-wrap: wrap; }
 .seg-btn { background: var(--card2); border-radius: 12px; padding: 10px 12px; font-weight: 800; font-size: 14px; border: 3px solid transparent; flex: 1 1 auto; }
 .seg-btn.on { border-color: var(--yellow); background: #43329e; }
 .seg-btn:disabled { opacity: .45; cursor: not-allowed; }
@@ -423,3 +423,22 @@ textarea.input { resize: vertical; font-size: 16px; }
 .guess-line b { color: var(--yellow); }
 .guess-line.close { background: rgba(255, 138, 61, .18); }
 .guess-line.correct { background: rgba(75, 227, 122, .22); color: var(--green); }
+
+/* ---------- Lügen-Quiz ---------- */
+.g-bluff { background: linear-gradient(135deg, #ff4d5e, #b388ff); }
+.bluff-q .qtext { font-size: 22px; }
+.bluff-options { display: flex; flex-direction: column; gap: 8px; }
+.bluff-opt { display: flex; gap: 8px; align-items: stretch; animation: popIn .3s both; }
+.bluff-opt-main {
+  flex: 1; text-align: left; background: var(--card2); border-radius: 16px; padding: 14px 16px; font-weight: 900; font-size: 18px;
+  border: 3px solid transparent; box-shadow: 0 5px 0 #1a1150; display: flex; flex-direction: column; gap: 2px; transition: transform .08s;
+}
+.bluff-opt-main:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 #1a1150; }
+.bluff-opt.on .bluff-opt-main { border-color: var(--teal); background: #1d3a6e; }
+.bluff-opt.mine .bluff-opt-main { opacity: .5; cursor: not-allowed; }
+.bluff-like { min-width: 54px; border-radius: 16px; background: var(--card2); font-size: 20px; box-shadow: 0 5px 0 #1a1150; filter: grayscale(1); opacity: .7; padding: 0 8px; font-weight: 900; }
+.bluff-like.on { filter: none; opacity: 1; background: #43329e; border: 3px solid var(--yellow); }
+.bluff-like.ghost { box-shadow: none; background: transparent; }
+.bluff-reveal { padding: 14px; }
+.bluff-reveal.truth { outline: 3px solid var(--green); background: #1f3f4a; }
+.bluff-picker { display: inline-flex; align-items: center; gap: 5px; background: #120b30; border-radius: 99px; padding: 3px 10px 3px 3px; font-weight: 800; font-size: 13px; }

@@ -100,9 +100,18 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Striche laufen **nicht** über den Spielzustand, sondern direkt per Broadcast-Event `draw` vom Zeichner an alle (`room.sendDraw` / `room.subscribeDraw`, alle 70 ms gebündelt, Koordinaten 0–1). Wer neu reinkommt, schickt `need`, der Zeichner antwortet mit `sync` (ganzes Bild).
 - Dateien: Regeln `lib/draw.js`, Wörter `lib/drawWords.js` (einfach erweitern), Zeichenfläche `components/DrawCanvas.js`, Oberfläche `components/DrawRoom.js`.
 
+## Lügen-Quiz (fertig)
+
+- Spielezentrale → **📱 Ein Handy** oder **🌐 Online** (`game: 'bluff'`), ab 3 Spielern. Host stellt 5/8/10 Fragen, 45/60/90 s Lügen-Zeit und Themen ein (mehrere oder „Alles gemischt“).
+- Ablauf pro Frage: normale Frage mit kurzer, überraschender Antwort → jeder schreibt eine Lüge (wer aus Versehen die Wahrheit tippt, wird gewarnt) → Wahrheit + Lügen gemischt (gleiche Lügen zusammengelegt), jeder wählt (eigene Lüge gesperrt, 30 s) und kann Lügen mit 👍 liken → Auflösung mit Erklärung.
+- Punkte: Wahrheit gefunden +3, jeder Reingefallene +2 für den Lügner, jedes 👍 +1. Mehrere Sieger bei Gleichstand.
+- Fragen: Startliste (91 Fragen, 9 Themen) in `lib/bluffQuestions.js`. Sie wird beim ersten Abruf in die Tabelle `questions` gelegt (category `Lügen: <Thema>`, level 1) – **keine eigene Tabelle, kein SQL nötig**. `POST /api/bluff` zieht die am wenigsten benutzten Fragen, danach füllt `after()` Themen mit < 12 ungenutzten Fragen per Claude auf (`lib/bluffServer.js`). Das Quiz-Auffüllen und `/admin` ignorieren diese Kategorien.
+- Online: `start` setzt `phase: 'loading'`, der Host lädt dann in seinem Timer (`lib/room.js`) die Fragen und ruft `bluffLoaded`. Regeln `lib/bluff.js`, Oberfläche `components/BluffRoom.js`, Ein Handy `components/BluffLocal.js` (Spielerliste aus Imposter wird übernommen), gemeinsame Teile `components/BluffParts.js`.
+
 ## Spielideen-Abstimmung (Spielezentrale)
 
 - Oben in der Spielezentrale (`components/IdeaBoard.js`): Ideen antippen = Stimme, beliebig viele pro Person, eigene Ideen schreiben (max. 10 pro Person, eigene wieder löschbar).
+- Achtung CSS: nie die Klasse `wrap` für Elemente nutzen – das ist der Seiten-Container (110 px Abstand unten). Für umbrechende Knopfreihen gibt es `seg seg-wrap`.
 - Vorgegebene Ideen in `lib/gameIdeas.js` (`key` nie ändern, daran hängen die Stimmen). Gebaute Spiele bekommen `done: true` (Anzeige „✅ jetzt spielbar“). Eigene Ideen haben den Schlüssel `u<id>`.
 - Speicher: Supabase-Tabellen `game_ideas` und `idea_votes` (`supabase/ideas.sql`, auch in `setup.sql`). Server: `lib/ideas.js`, API `GET/POST /api/ideas`. Wähler = Profil-ID aus localStorage.
 - Was die Gruppe will, sieht man dort an den Stimmen. Vor dem nächsten Spiel dort nachschauen.

@@ -104,7 +104,7 @@ export function ImposterSettings({ settings, onChange, disabled, playerCount }) 
       </div>
       <div>
         <div className="muted" style={{ fontWeight: 800, marginBottom: 6 }}>Wörter aus</div>
-        <div className="seg wrap">
+        <div className="seg seg-wrap">
           {[{ key: ALL_KEY, name: 'Alles gemischt', icon: '🎲' }, ...WORD_CATEGORIES].map((c) => (
             <button key={c.key} className={'seg-btn' + (settings.category === c.key ? ' on' : '')} disabled={disabled} onClick={() => { sfx.click(); onChange({ category: c.key }); }}>
               {c.icon} {c.name}

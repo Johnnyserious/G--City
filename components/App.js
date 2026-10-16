@@ -4,6 +4,7 @@ import ProfileEditor from './ProfileEditor';
 import GameCenter from './GameCenter';
 import Room from './Room';
 import ImposterLocal from './ImposterLocal';
+import BluffLocal from './BluffLocal';
 import { supabaseConfigured, MOCK } from '@/lib/supabase';
 
 // Im Testmodus pro Tab ein eigenes Profil
@@ -83,6 +84,9 @@ export default function App() {
         )}
       </>
     );
+  }
+  if (local === 'bluff') {
+    return <BluffLocal me={profile} onLeave={() => setLocal(null)} />;
   }
   if (local === 'imposter') {
     return <ImposterLocal me={profile} onLeave={() => setLocal(null)} />;
