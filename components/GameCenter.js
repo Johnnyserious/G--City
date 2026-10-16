@@ -3,10 +3,11 @@ import { useState } from 'react';
 import Avatar from './Avatar';
 import { sfx, isMuted, setMuted } from '@/lib/sound';
 
-export default function GameCenter({ me, onEdit, onCreate, onJoin }) {
+export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal }) {
   const [code, setCode] = useState('');
   const [muted, setM] = useState(isMuted());
   const [toast, setToast] = useState('');
+  const [choose, setChoose] = useState(false);
 
   const soon = (name) => {
     sfx.click();
@@ -31,14 +32,14 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin }) {
       <p className="muted" style={{ marginTop: 0, fontWeight: 700 }}>Such dir ein Spiel aus und hol die Jungs rein.</p>
 
       <div className="games">
-        <button className="game-card g-quiz" onClick={() => { sfx.pick(); onCreate(); }}>
+        <button className="game-card g-quiz" onClick={() => { sfx.pick(); onCreate('quiz'); }}>
           <span className="tag">▶ Spielbar</span>
           <span className="emoji">🧠</span>
           <h3>Quiz-Board</h3>
           <p>5 zufällige Themen, Joker, Veto und Revanche. Je mehr Punkte, desto härter.</p>
         </button>
-        <button className="game-card g-imp locked" onClick={() => soon('Imposter')}>
-          <span className="tag">🔒 Bald</span>
+        <button className="game-card g-imp" onClick={() => { sfx.pick(); setChoose(true); }}>
+          <span className="tag">▶ Spielbar</span>
           <span className="emoji">🕵️</span>
           <h3>Imposter</h3>
           <p>Einer kennt das Wort nicht. Oder mehrere. Oder keiner.</p>
@@ -50,6 +51,28 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin }) {
           <p>Ohne Worte erklären, die anderen raten.</p>
         </button>
       </div>
+
+      {choose && (
+        <div className="overlay" onClick={() => setChoose(false)}>
+          <div className="qcard stack" onClick={(e) => e.stopPropagation()}>
+            <div className="row between">
+              <h2 style={{ fontSize: 30 }}>🕵️ Imposter</h2>
+              <button className="icon-btn" onClick={() => setChoose(false)} aria-label="Schließen">✕</button>
+            </div>
+            <p className="muted" style={{ margin: 0, fontWeight: 700 }}>Wie wollt ihr spielen?</p>
+            <button className="mode-card" style={{ width: '100%' }} onClick={() => { sfx.pick(); setChoose(false); onLocal('imposter'); }}>
+              <div className="big">📱 Ein Handy</div>
+              <div style={{ fontWeight: 800 }}>Ihr sitzt zusammen und gebt ein Handy reihum weiter.</div>
+              <div className="muted" style={{ fontSize: 13, fontWeight: 700 }}>Kein Raum, kein Internet für die anderen nötig.</div>
+            </button>
+            <button className="mode-card" style={{ width: '100%' }} onClick={() => { sfx.pick(); setChoose(false); onCreate('imposter'); }}>
+              <div className="big">🌐 Online</div>
+              <div style={{ fontWeight: 800 }}>Jeder an seinem eigenen Handy, Wörter werden eingetippt.</div>
+              <div className="muted" style={{ fontSize: 13, fontWeight: 700 }}>Mit Raum-Code, Chat und Abstimmung.</div>
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="card" style={{ marginTop: 22 }}>
         <h3 style={{ fontSize: 24, marginBottom: 10 }}>Raum beitreten</h3>

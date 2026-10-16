@@ -58,7 +58,7 @@ Nach jeder Änderung an den Variablen ist in Vercel ein **Redeploy** nötig.
 ## Themen und Schwierigkeit
 
 - Die Themen stehen in `lib/engine.js` → `CATEGORIES`, mit `group: 'pop'` oder `'edu'`. Jedes Board hat **3 Pop- und 2 Bildungsthemen**. Der Themenname ist auch der Schlüssel in der Datenbank: Wird er umbenannt, gelten die alten Fragen dafür nicht mehr.
-- Die Beschreibung der Schwierigkeit steht in `lib/questions.js` → `LEVELS`, die Stil-Regeln in `RULES`. Stufe 1 = 20/100 Punkte, Stufe 5 = 100/500 Punkte. Vorgabe von Jonas: 100 machbar, aber nicht geschenkt. 500 für einen 30-Jährigen mit gutem Allgemeinwissen lösbar, ohne Expertenwissen. Alles auf Schul-/Abiturniveau.
+- Die Beschreibung der Schwierigkeit steht in `lib/questions.js` → `LEVELS`, die Stil-Regeln in `RULES`. Stufe 1 = 20/100 Punkte, Stufe 5 = 100/500 Punkte. Vorgabe von Jonas: 100 machbar, aber nicht geschenkt. Die höheren Stufen sollen gut beantwortbar bleiben (im Oktober 2026 auf seinen Wunsch leichter gemacht): 500 = etwas anspruchsvoller, aber mit gutem Allgemeinwissen lösbar, keine Expertenfragen. Alles auf Schul-/Abiturniveau.
 - Ändert man die Schwierigkeit, betrifft das nur **neu erzeugte** Fragen. Alte löscht man in Supabase im SQL Editor, z. B. `delete from questions where level = 5;`.
 
 ## Lokal testen (ohne Konten und ohne Kosten)
@@ -76,6 +76,18 @@ MOCK_AI=1 MOCK_DB=1 npx next start -p 3123
 Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tests vorhanden.
 **Vor dem Push immer einmal normal bauen** (`npm run build` ohne Mock), damit der Mock-Modus nicht live geht.
 
-## Geplant
+## Imposter (fertig, Phase 2)
 
-- Phase 2: Imposter (online + ein Handy zum Rumreichen, 20-Sekunden-Timer, Karte zum Hochziehen), dann Pantomime.
+- Start in der Spielezentrale → Auswahl **📱 Ein Handy** oder **🌐 Online**.
+- Regeln (`lib/imposter.js`, reine Funktionen): 2 Wort-Runden, jeder sagt reihum ein Wort (20 s), dann 60 s Diskussion (Chat), Abstimmung. Erwischter Imposter darf das Wort raten (30 s), trifft er, gewinnt er trotzdem. Anzahl Imposter: 1, 2 (ab 5 Spielern) oder „Überraschung“ (0–2, dann gibt es beim Voten „Keiner“). Punkte: Crew-Sieg +1, Imposter-Sieg +3.
+- Wörter in `lib/imposterWords.js`: Paare [Lösungswort, Tippwort], nach Themen. Neue Wörter einfach dort eintragen.
+- `components/RevealCard.js`: Karte hochziehen und festhalten, beim Loslassen fällt sie zurück. Lösungswort blau, Tippwort rot.
+- Online: Raum wird mit `game: 'imposter'` erstellt (`sessionStorage qa_game_CODE`), `lib/room.js` leitet Aktionen an `imposterAction`, Timer an `imposterTick` weiter. Oberfläche: `components/ImposterRoom.js`.
+- Ein Handy: `components/ImposterLocal.js`, läuft komplett im Browser ohne Supabase. Spielerliste wird in localStorage (`imp_local`) gemerkt.
+
+## Geplant (Reihenfolge von Jonas)
+
+1. Charade
+2. Wer bin ich?
+3. Zeichenspiel: Einer bekommt ein Wort und malt es, wer zuerst das richtige Wort eintippt, bekommt Punkte. Dann reihum weiter.
+4. Danach weitere Spielmöglichkeiten.

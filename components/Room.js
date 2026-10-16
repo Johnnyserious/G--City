@@ -9,9 +9,10 @@ import QuestionOverlay from './QuestionOverlay';
 import EndScreen from './EndScreen';
 import Chat from './Chat';
 import Scorebar from './Scorebar';
+import ImposterRoom from './ImposterRoom';
 
-export default function Room({ code, me, isCreator, onLeave, onEditProfile }) {
-  const room = useRoom({ code, me, isCreator });
+export default function Room({ code, me, isCreator, game, onLeave, onEditProfile }) {
+  const room = useRoom({ code, me, isCreator, game });
   const { state, conn } = room;
   const [muted, setM] = useState(isMuted());
   const [toast, setToast] = useState('');
@@ -67,6 +68,8 @@ export default function Room({ code, me, isCreator, onLeave, onEditProfile }) {
         <h2>Verbinde mit Raum {code} …</h2>
       </div>
     );
+  } else if (state.game === 'imposter') {
+    body = <ImposterRoom room={room} me={me} code={code} />;
   } else if (state.phase === 'lobby') {
     body = <Lobby room={room} me={me} code={code} />;
   } else if (state.phase === 'end') {

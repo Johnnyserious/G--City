@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import ProfileEditor from './ProfileEditor';
 import GameCenter from './GameCenter';
 import Room from './Room';
+import ImposterLocal from './ImposterLocal';
 import { supabaseConfigured, MOCK } from '@/lib/supabase';
 
 // Im Testmodus pro Tab ein eigenes Profil
@@ -28,6 +29,7 @@ export default function App() {
   const [profile, setProfile] = useState(loadProfile);
   const [editing, setEditing] = useState(false);
   const [room, setRoom] = useState(readRoom);
+  const [local, setLocal] = useState(null); // Spiel auf einem Handy, ohne Raum
 
   useEffect(() => {
     const onPop = () => setRoom(readRoom());
@@ -45,9 +47,10 @@ export default function App() {
     window.history.pushState({}, '', '?r=' + code);
     setRoom(code);
   };
-  const createRoom = () => {
+  const createRoom = (game = 'quiz') => {
     const code = makeCode();
     sessionStorage.setItem('qa_creator_' + code, '1');
+    sessionStorage.setItem('qa_game_' + code, game);
     goRoom(code);
   };
   const leave = () => {
@@ -72,7 +75,7 @@ export default function App() {
   if (room) {
     return (
       <>
-        <Room key={room} code={room} me={profile} isCreator={sessionStorage.getItem('qa_creator_' + room) === '1'} onLeave={leave} onEditProfile={() => setEditing(true)} />
+        <Room key={room} code={room} me={profile} isCreator={sessionStorage.getItem('qa_creator_' + room) === '1'} game={sessionStorage.getItem('qa_game_' + room) || 'quiz'} onLeave={leave} onEditProfile={() => setEditing(true)} />
         {editing && (
           <div className="overlay" style={{ display: 'block', zIndex: 80 }}>
             <ProfileEditor initial={profile} onSave={saveProfile} onCancel={() => setEditing(false)} />
@@ -81,8 +84,11 @@ export default function App() {
       </>
     );
   }
+  if (local === 'imposter') {
+    return <ImposterLocal me={profile} onLeave={() => setLocal(null)} />;
+  }
   if (editing) {
     return <ProfileEditor initial={profile} onSave={saveProfile} onCancel={() => setEditing(false)} />;
   }
-  return <GameCenter me={profile} onEdit={() => setEditing(true)} onCreate={createRoom} onJoin={goRoom} />;
+  return <GameCenter me={profile} onEdit={() => setEditing(true)} onCreate={createRoom} onJoin={goRoom} onLocal={setLocal} />;
 }
