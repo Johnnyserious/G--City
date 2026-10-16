@@ -6,6 +6,8 @@ import Room from './Room';
 import ImposterLocal from './ImposterLocal';
 import BluffLocal from './BluffLocal';
 import EstimateLocal from './EstimateLocal';
+import Shop from './Shop';
+import { useAccount, shopApi } from '@/lib/account';
 import { supabaseConfigured, MOCK } from '@/lib/supabase';
 
 // Im Testmodus pro Tab ein eigenes Profil
@@ -32,6 +34,24 @@ export default function App() {
   const [editing, setEditing] = useState(false);
   const [room, setRoom] = useState(readRoom);
   const [local, setLocal] = useState(null); // Spiel auf einem Handy, ohne Raum
+  const [shop, setShop] = useState(() => new URLSearchParams(window.location.search).has('shop'));
+  const [shopNotice, setShopNotice] = useState('');
+  const acc = useAccount();
+
+  // Rückkehr von Stripe: Kauf bestätigen und gutschreiben
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const result = q.get('shop');
+    if (!result || !acc.ready) return;
+    if (result === 'cancel') { setShopNotice('Kauf abgebrochen – es wurde nichts abgebucht.'); window.history.replaceState({}, '', window.location.pathname); return; }
+    const sid = q.get('session_id');
+    if (result === 'success' && sid && acc.token) {
+      window.history.replaceState({}, '', window.location.pathname);
+      shopApi('confirm', { sessionId: sid })
+        .then((d) => setShopNotice(d.paid ? 'Danke! Dein Kauf ist gutgeschrieben 🎉' : 'Zahlung wird noch bearbeitet – die Münzen kommen gleich.'))
+        .catch((e) => setShopNotice(String(e.message || e)));
+    }
+  }, [acc.ready, acc.token]);
 
   useEffect(() => {
     const onPop = () => setRoom(readRoom());
@@ -86,6 +106,9 @@ export default function App() {
       </>
     );
   }
+  if (shop) {
+    return <Shop notice={shopNotice} onClose={() => { setShop(false); setShopNotice(''); }} />;
+  }
   if (local === 'estimate') {
     return <EstimateLocal me={profile} onLeave={() => setLocal(null)} />;
   }
@@ -98,5 +121,5 @@ export default function App() {
   if (editing) {
     return <ProfileEditor initial={profile} onSave={saveProfile} onCancel={() => setEditing(false)} />;
   }
-  return <GameCenter me={profile} onEdit={() => setEditing(true)} onCreate={createRoom} onJoin={goRoom} onLocal={setLocal} />;
+  return <GameCenter me={profile} onEdit={() => setEditing(true)} onCreate={createRoom} onJoin={goRoom} onLocal={setLocal} onShop={() => setShop(true)} />;
 }

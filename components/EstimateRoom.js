@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import JokerBag, { ShopToggle } from './JokerBag';
 import confetti from 'canvas-confetti';
 import Avatar from './Avatar';
 import { useCountdown, TimerBar, ScoreList } from './ImposterParts';
@@ -66,6 +67,7 @@ function EstLobby({ room, me, code }) {
         <EstSettings settings={s.settings} disabled={!isHost} onChange={(x) => send('settings', x)} />
         {!isHost && <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginTop: 8 }}>Nur der Host kann das ändern.</div>}
       </div>
+      <ShopToggle room={room} me={me} />
       <EstRules />
       {isHost ? (
         <button className="btn big full pink" disabled={!enough} onClick={() => { sfx.fanfare(); send('start'); }}>
@@ -136,6 +138,7 @@ function Question({ room, me }) {
               </div>
             ))}
           </div>
+          <JokerBag room={room} me={me} items={['est_double']} />
           <div className="center muted" style={{ fontWeight: 800 }}>{Math.ceil(left)} s</div>
           {isHost && <div className="center"><button className="btn small ghost" onClick={() => send('endAnswer')}>Auflösen ➜</button></div>}
         </>

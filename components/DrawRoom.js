@@ -1,5 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { revealFor } from '@/lib/shopGame';
+import JokerBag, { ShopToggle } from './JokerBag';
 import confetti from 'canvas-confetti';
 import Avatar from './Avatar';
 import DrawCanvas from './DrawCanvas';
@@ -88,6 +90,7 @@ function DrawLobby({ room, me, code }) {
         <Settings s={s} send={send} disabled={!isHost} />
         {!isHost && <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginTop: 8 }}>Nur der Host kann das ändern.</div>}
       </div>
+      <ShopToggle room={room} me={me} />
       <details className="card rules">
         <summary className="display" style={{ fontSize: 20 }}>So geht’s 📖</summary>
         <ol>
@@ -165,7 +168,7 @@ function Turn({ room, me }) {
     header = isDrawer ? (
       <span>Mal: <b style={{ color: 'var(--yellow)' }}>{s.word?.word}</b></span>
     ) : (
-      <span className="mask">{maskWord(s.word?.word || '', s.hints).map((c, i) => <span key={i} className={c === ' ' ? 'gap' : ''}>{c}</span>)}<small>{(s.word?.word || '').replace(/ /g, '').length}</small></span>
+      <span className="mask">{maskWord(s.word?.word || '', revealFor(s, me.id, s.turnId) ? [...s.hints, 0, (s.word?.word || '').length - 1] : s.hints).map((c, i) => <span key={i} className={c === ' ' ? 'gap' : ''}>{c}</span>)}<small>{(s.word?.word || '').replace(/ /g, '').length}</small></span>
     );
   } else {
     header = <span>Das Wort war <b style={{ color: 'var(--yellow)' }}>{s.word?.word}</b></span>;
@@ -238,6 +241,7 @@ function Turn({ room, me }) {
             <button className="btn small teal" onClick={guess}>➜</button>
           </div>
         )}
+        {!isDrawer && s.phase === 'draw' && <div style={{ marginTop: 8 }}><JokerBag room={room} me={me} items={['draw_letters']} /></div>}
         {(isDrawer || isHost) && s.phase === 'draw' && (
           <div className="center" style={{ marginTop: 8 }}>
             <button className="btn small ghost" onClick={() => confirm(isDrawer ? 'Zug aufgeben?' : 'Diesen Zug überspringen?') && send('skip')}>{isDrawer ? 'Aufgeben' : 'Zug überspringen'}</button>

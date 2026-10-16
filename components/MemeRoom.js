@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import JokerBag, { ShopToggle } from './JokerBag';
 import confetti from 'canvas-confetti';
 import Avatar from './Avatar';
 import MemeImage from './MemeImage';
@@ -96,6 +97,7 @@ function MemeLobby({ room, me, code }) {
         <Settings s={s} send={send} disabled={!isHost} />
         {!isHost && <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginTop: 8 }}>Nur der Host kann das ändern.</div>}
       </div>
+      <ShopToggle room={room} me={me} />
       <details className="card rules">
         <summary className="display" style={{ fontSize: 20 }}>So geht’s 📖</summary>
         <ol>
@@ -160,6 +162,7 @@ function WritePhase({ room, me }) {
             <button className="btn ghost small" disabled={as.rerolled} onClick={() => { sfx.pick(); send('reroll'); }}>{as.rerolled ? '🎲 schon gewürfelt' : '🎲 Anderes Bild'}</button>
             <button className="btn green" style={{ flex: 1 }} disabled={!top.trim() && !bottom.trim()} onClick={submit}>Fertig ✓</button>
           </div>
+          <JokerBag room={room} me={me} items={['meme_reroll']} />
         </div>
       )}
       <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap' }}>

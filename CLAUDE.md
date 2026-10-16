@@ -124,6 +124,17 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - **Nur feste, geprüfte Fragen** (81 Stück, 7 Themen) in `lib/estimateQuestions.js` – Jonas wollte hier ausdrücklich keine KI-Fragen. Format [Frage, Zahl, Einheit, Erklärung]; Einheit `'Jahr'` = Jahreszahl.
 - Regeln `lib/estimate.js`, Oberfläche `components/EstimateRoom.js`, Ein Handy `components/EstimateLocal.js`, gemeinsame Teile `components/EstimateParts.js`.
 
+## Shop: Münzen, Joker, Bundles (Echtgeld über Stripe)
+
+- Ziel: Projekt finanzieren. Jonas verkauft **privat mit Gewerbe**. Vor dem Live-Schalten: Daten in `lib/legal.js` eintragen (Impressum/AGB/Widerruf/Datenschutz unter `/impressum`, `/agb`, `/widerruf`, `/datenschutz`; Platzhalter werden gelb markiert) und rechtlich prüfen lassen.
+- Modell (Jonas' Wahl): **Münzen-Pakete** (300/550/1.200/2.600 für 2,99/4,99/9,99/19,99 €, 100 Münzen ≈ 1 €) **und direkt kaufbare Bundles** (Joker + Bonus-Münzen). Shop verkauft **nur Joker & Hilfen** (20–60 Münzen). Alles in `lib/shopCatalog.js`. Täglich 10 Gratis-Münzen für Eingeloggte.
+- Fairness: **max. 1 gekaufter Joker pro Spieler und Spiel**, Host kann sie in der Lobby ausschalten (`ShopToggle`). Regeln + Wirkung in `lib/shopGame.js` (`canUseBought`/`applyBought`, Zustand unter `state.shop`, Reset bei `start`). Wirkungen: Quiz-Joker zurück, Emoji 2 Buchstaben (nur für den Käufer), Zeichnen erster+letzter Buchstabe, Schätzen zweiter Doppelt-Joker, Meme nochmal würfeln, Lügen-Quiz 50:50. Anzeige im Spiel: `components/JokerBag.js`. Ablauf: Browser verbraucht den Joker über die API, dann Aktion `useBought` an den Host.
+- Login: **E-Mail + Passwort** über Supabase Auth (`lib/account.js`, inkl. Passwort vergessen). Spielen geht weiter ohne Konto.
+- Datenbank: `supabase/shop.sql` (Tabellen `wallets`, `inventory`, `coin_ledger` + Funktionen `shop_grant/daily/buy/use`). `coin_ledger.ref` = Stripe-Session → Käufe werden nie doppelt gutgeschrieben.
+- Server: `lib/wallet.js`, API `GET/POST /api/shop` (wallet, daily, buy, use, checkout, confirm) und `POST /api/stripe/webhook`. Stripe wird direkt per REST angesprochen (kein npm-Paket), Checkout mit `price_data` – **in Stripe müssen keine Produkte angelegt werden**. Nach dem Bezahlen bestätigt `confirm` den Kauf; der Webhook ist die Absicherung, falls jemand das Fenster schließt.
+- Umgebungsvariablen: `STRIPE_SECRET_KEY` (sk_test_… / sk_live_…), optional `STRIPE_WEBHOOK_SECRET` (whsec_…). Lokal testen: `MOCK_DB=1` simuliert Login (Token `mock:<id>`) und Bezahlung ohne Stripe.
+- Hinweis: Den Verbrauch von Jokern prüft der Server, die Wirkung im Spiel der Host – ein manipulierter Browser könnte sich theoretisch Vorteile erschummeln, aber nie Münzen.
+
 ## Spielideen-Abstimmung (Spielezentrale)
 
 - Oben in der Spielezentrale (`components/IdeaBoard.js`): Ideen antippen = Stimme, beliebig viele pro Person, eigene Ideen schreiben (max. 10 pro Person, eigene wieder löschbar).

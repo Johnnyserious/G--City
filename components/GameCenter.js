@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import Avatar from './Avatar';
 import IdeaBoard from './IdeaBoard';
+import { CoinChip } from './Shop';
 import { sfx, isMuted, setMuted } from '@/lib/sound';
 
-export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal }) {
+export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal, onShop }) {
   const [code, setCode] = useState('');
   const [muted, setM] = useState(isMuted());
   const [toast, setToast] = useState('');
@@ -22,6 +23,7 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal }) {
       <div className="topbar">
         <div className="logo">G <span>City</span></div>
         <div className="row">
+          <CoinChip onClick={() => { sfx.click(); onShop(); }} />
           <button className="icon-btn" onClick={() => { setMuted(!muted); setM(!muted); }} aria-label="Ton">{muted ? '🔇' : '🔊'}</button>
           <button className="row" onClick={onEdit} style={{ background: 'var(--card2)', borderRadius: 99, padding: '4px 14px 4px 4px', fontWeight: 800 }}>
             <Avatar avatar={me.avatar} size={38} /> {me.name} ✏️
@@ -125,6 +127,7 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal }) {
       </div>
       <div className="center" style={{ marginTop: 18 }}>
         <a href="/admin" className="muted" style={{ fontWeight: 800, fontSize: 14 }}>⚙️ Fragen-Datenbank</a>
+        <div className="legal-links" style={{ marginTop: 10 }}><a href="/impressum">Impressum</a> · <a href="/agb">AGB</a> · <a href="/widerruf">Widerruf</a> · <a href="/datenschutz">Datenschutz</a></div>
       </div>
     </div>
   );

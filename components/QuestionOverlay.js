@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import JokerBag from './JokerBag';
 import confetti from 'canvas-confetti';
 import Avatar from './Avatar';
 import { CAT_COLORS } from './Board';
@@ -152,6 +153,7 @@ export default function QuestionOverlay({ room, me }) {
                     <button className="joker" disabled={!jokers.choices || c.used.choices} onClick={() => joker('choices')}><span className="j">🔠</span>4 Antworten</button>
                   </div>
                 )}
+                {mine && <div style={{ marginTop: 10 }}><JokerBag room={room} me={me} items={['quiz_hint', 'quiz_swap', 'quiz_choices']} /></div>}
                 <div className="center muted" style={{ marginTop: 12, fontWeight: 800 }}>{Math.ceil(left)} Sek.</div>
               </>
             )}

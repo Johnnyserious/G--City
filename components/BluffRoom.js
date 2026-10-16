@@ -1,5 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { hiddenFor } from '@/lib/shopGame';
+import JokerBag, { ShopToggle } from './JokerBag';
 import confetti from 'canvas-confetti';
 import Avatar from './Avatar';
 import { useCountdown, TimerBar, ScoreList } from './ImposterParts';
@@ -75,6 +77,7 @@ function BluffLobby({ room, me, code }) {
         <BluffSettings settings={s.settings} disabled={!isHost} onChange={(x) => send('settings', x)} />
         {!isHost && <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginTop: 8 }}>Nur der Host kann das ändern.</div>}
       </div>
+      <ShopToggle room={room} me={me} />
       <BluffRules />
       {s.error && <div className="idea-error">Fragen konnten nicht geladen werden: {s.error}</div>}
       {isHost ? (
@@ -160,13 +163,14 @@ function Choose({ room, me }) {
       <b className="center" style={{ display: 'block' }}>Welche Antwort ist echt? 🕵️ ({Math.ceil(left)} s)</b>
       <div className="muted center" style={{ fontWeight: 700, fontSize: 13, marginTop: 4 }}>Mit 👍 kannst du lustige Lügen belohnen.</div>
       <OptionPicker
-        options={s.options}
+        options={s.options.filter((o) => !hiddenFor(s, me.id).includes(o.id))}
         myId={me.id}
         picked={s.picks[me.id]}
         liked={s.likes[me.id] || []}
         onPick={(id) => send('pick', { option: id })}
         onLike={(id) => send('like', { option: id })}
       />
+      {!s.picks[me.id] && <JokerBag room={room} me={me} items={['bluff_5050']} />}
       <Waiting s={s} done={(id) => !!s.picks[id]} />
       {isHost && <div className="center"><button className="btn small ghost" onClick={() => send('endChoose')}>Auflösen ➜</button></div>}
     </>

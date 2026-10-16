@@ -1,5 +1,8 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { revealFor } from '@/lib/shopGame';
+import { maskWord } from '@/lib/draw';
+import JokerBag, { ShopToggle } from './JokerBag';
 import confetti from 'canvas-confetti';
 import Avatar from './Avatar';
 import { useCountdown, TimerBar, ScoreList } from './ImposterParts';
@@ -96,6 +99,7 @@ function EmojiLobby({ room, me, code }) {
         <Settings s={s} send={send} disabled={!isHost} />
         {!isHost && <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginTop: 8 }}>Nur der Host kann das ändern.</div>}
       </div>
+      <ShopToggle room={room} me={me} />
       <details className="card rules">
         <summary className="display" style={{ fontSize: 20 }}>So geht’s 📖</summary>
         <ol>
@@ -127,7 +131,8 @@ function Play({ room, me }) {
   const lastCount = useRef(0);
   const mySolve = s.solved.find((x) => x.pid === me.id);
   const players = s.order.map((id) => s.players[id]).filter((p) => p && p.online);
-  const hint = emojiHint(pz, s.hint);
+  const boughtHint = revealFor(s, me.id, s.idx);
+  const hint = boughtHint ? maskWord(pz.a, [0, 1]) : emojiHint(pz, s.hint);
   const t = topicOf(pz.topic);
 
   useEffect(() => { setText(''); sfx.pick(); setTimeout(() => inputRef.current?.focus(), 100); }, [s.idx]);
@@ -201,6 +206,7 @@ function Play({ room, me }) {
             <button className="btn small teal" onClick={guess}>➜</button>
           </div>
         )}
+        {s.phase === 'play' && !mySolve && <div style={{ marginTop: 8 }}><JokerBag room={room} me={me} items={['emoji_letters']} /></div>}
         {s.phase === 'play' && mySolve && <div className="center" style={{ fontWeight: 900, color: 'var(--green)', marginTop: 8 }}>Richtig! +{mySolve.pts} – warte auf die anderen …</div>}
       </div>
 
