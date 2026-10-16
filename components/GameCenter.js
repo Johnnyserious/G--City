@@ -54,6 +54,12 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal }) {
           <h3>Lügen-Quiz</h3>
           <p>Erfinde eine Antwort, die echt klingt, und find die Wahrheit zwischen den Lügen.</p>
         </button>
+        <button className="game-card g-emoji" onClick={() => { sfx.pick(); onCreate('emoji'); }}>
+          <span className="tag">▶ Neu</span>
+          <span className="emoji">🦁</span>
+          <h3>Emoji-Rätsel</h3>
+          <p>2–3 Emojis, ein Begriff. Wer’s zuerst errät, holt die meisten Punkte.</p>
+        </button>
         <button className="game-card g-meme" onClick={() => { sfx.pick(); onCreate('meme'); }}>
           <span className="tag">▶ Neu</span>
           <span className="emoji">😂</span>

@@ -108,6 +108,12 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Fragen: Startliste (91 Fragen, 9 Themen) in `lib/bluffQuestions.js`. Sie wird beim ersten Abruf in die Tabelle `questions` gelegt (category `Lügen: <Thema>`, level 1) – **keine eigene Tabelle, kein SQL nötig**. `POST /api/bluff` zieht die am wenigsten benutzten Fragen, danach füllt `after()` Themen mit < 12 ungenutzten Fragen per Claude auf (`lib/bluffServer.js`). Das Quiz-Auffüllen und `/admin` ignorieren diese Kategorien.
 - Online: `start` setzt `phase: 'loading'`, der Host lädt dann in seinem Timer (`lib/room.js`) die Fragen und ruft `bluffLoaded`. Regeln `lib/bluff.js`, Oberfläche `components/BluffRoom.js`, Ein Handy `components/BluffLocal.js` (Spielerliste aus Imposter wird übernommen), gemeinsame Teile `components/BluffParts.js`.
 
+## Emoji-Rätsel (fertig)
+
+- Online mit Raum-Code (`game: 'emoji'`), ab 2 Spielern. Host stellt 10/15/20 Rätsel, 30/45/60 s pro Rätsel und Themen ein (Wörter, Filme & Serien, Essen & Trinken, Marken & Apps oder gemischt).
+- Immer 2–3 Emojis → ein Begriff. Alle raten gleichzeitig, mehrere Versuche erlaubt. Richtig: 1. +5, 2. +3, 3. +2, danach +1. Falsche Tipps sehen alle, „ganz nah dran“ ohne Text. Nach 40 % der Zeit Lücken (Buchstabenzahl), nach 70 % der erste Buchstabe. Sind alle fertig, kommt die Auflösung (5 s), dann das nächste Rätsel.
+- Rätsel (138 Stück) in `lib/emojiPuzzles.js` als [Emojis, Lösung, [weitere Antworten]] – einfach erweitern. Antwortprüfung ignoriert Artikel und einen Tippfehler (`checkEmoji` in `lib/emoji.js`). Oberfläche `components/EmojiRoom.js`.
+
 ## Spielideen-Abstimmung (Spielezentrale)
 
 - Oben in der Spielezentrale (`components/IdeaBoard.js`): Ideen antippen = Stimme, beliebig viele pro Person, eigene Ideen schreiben (max. 10 pro Person, eigene wieder löschbar).

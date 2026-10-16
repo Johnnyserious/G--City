@@ -442,3 +442,9 @@ textarea.input { resize: vertical; font-size: 16px; }
 .bluff-reveal { padding: 14px; }
 .bluff-reveal.truth { outline: 3px solid var(--green); background: #1f3f4a; }
 .bluff-picker { display: inline-flex; align-items: center; gap: 5px; background: #120b30; border-radius: 99px; padding: 3px 10px 3px 3px; font-weight: 800; font-size: 13px; }
+
+/* ---------- Emoji-Rätsel ---------- */
+.g-emoji { background: linear-gradient(135deg, #ffd23f, #4be37a); color: #1d2a00; }
+.emoji-card { padding: 22px 14px; }
+.emoji-big { font-size: clamp(64px, 20vw, 110px); line-height: 1.15; letter-spacing: 6px; margin-bottom: 10px; animation: zoomIn .4s cubic-bezier(.3,1.5,.5,1) both; }
+.score-item.solved { border-color: var(--green); }
