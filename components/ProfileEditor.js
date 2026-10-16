@@ -50,7 +50,7 @@ export default function ProfileEditor({ initial, onSave, onCancel, joining }) {
   return (
     <div className="wrap">
       <div className="topbar">
-        <div className="logo">Quiz<span>abend</span></div>
+        <div className="logo">G <span>City</span></div>
         {onCancel && <button className="icon-btn" onClick={onCancel} aria-label="Schließen">✕</button>}
       </div>
       <div className="card">

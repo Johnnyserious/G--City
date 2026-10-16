@@ -17,7 +17,7 @@ export default function Lobby({ room, me, code }) {
   const invite = async () => {
     sfx.pop();
     if (navigator.share) {
-      try { await navigator.share({ title: 'Quizabend', text: 'Komm ins Quiz! Code: ' + code, url: link }); return; } catch {}
+      try { await navigator.share({ title: 'G City', text: 'Komm zu G City! Code: ' + code, url: link }); return; } catch {}
     }
     try { await navigator.clipboard.writeText(link); } catch {}
     setCopied(true);

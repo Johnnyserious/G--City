@@ -18,7 +18,7 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin }) {
     <div className="wrap">
       {toast && <div className="toast">{toast}</div>}
       <div className="topbar">
-        <div className="logo">Quiz<span>abend</span></div>
+        <div className="logo">G <span>City</span></div>
         <div className="row">
           <button className="icon-btn" onClick={() => { setMuted(!muted); setM(!muted); }} aria-label="Ton">{muted ? '🔇' : '🔊'}</button>
           <button className="row" onClick={onEdit} style={{ background: 'var(--card2)', borderRadius: 99, padding: '4px 14px 4px 4px', fontWeight: 800 }}>

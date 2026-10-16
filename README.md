@@ -1,4 +1,4 @@
-# Quizabend
+# G City
 
 Spieleabend-App für die Gruppe: Spielezentrale, Avatar-Baukasten, Räume per Code, Quiz-Board mit KI-Fragen, Joker, Veto, Revanche-Vote und Live-Chat.
 

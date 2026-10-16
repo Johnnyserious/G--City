@@ -1,8 +1,8 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Quizabend',
-  description: 'Spieleabend für die Gruppe – Quiz, Joker, Chat und mehr',
+  title: 'G City',
+  description: 'G City – Spieleabend für die Gruppe',
 };
 export const viewport = { width: 'device-width', initialScale: 1, maximumScale: 1, themeColor: '#170f3a' };
 
