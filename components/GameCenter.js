@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Avatar from './Avatar';
+import IdeaBoard from './IdeaBoard';
 import { sfx, isMuted, setMuted } from '@/lib/sound';
 
 export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal }) {
@@ -31,6 +32,9 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal }) {
       <h1 style={{ fontSize: 44, margin: '10px 0 4px' }}>Spielezentrale</h1>
       <p className="muted" style={{ marginTop: 0, fontWeight: 700 }}>Such dir ein Spiel aus und hol die Jungs rein.</p>
 
+      <IdeaBoard me={me} />
+
+      <h2 style={{ fontSize: 28, margin: '22px 0 12px' }}>Spiele</h2>
       <div className="games">
         <button className="game-card g-quiz" onClick={() => { sfx.pick(); onCreate('quiz'); }}>
           <span className="tag">▶ Spielbar</span>

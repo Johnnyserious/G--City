@@ -337,3 +337,33 @@ h1, h2, h3, .display { font-family: var(--display); font-weight: 400; letter-spa
 .icon-btn.small { width: 34px; height: 34px; font-size: 13px; border-radius: 10px; }
 .icon-btn:disabled { opacity: .3; }
 .local-player { padding: 4px 0; }
+
+/* ---------- Spielideen-Abstimmung ---------- */
+.idea-board { margin-bottom: 4px; }
+.idea-head { width: 100%; background: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; padding: 0; }
+.idea-toggle { background: var(--card2); border-radius: 12px; width: 38px; height: 38px; display: grid; place-items: center; flex-shrink: 0; font-size: 14px; }
+.idea-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+@media (max-width: 460px) { .idea-grid { grid-template-columns: 1fr 1fr; gap: 8px; } }
+.idea { position: relative; }
+.idea-main {
+  width: 100%; height: 100%; text-align: left; background: var(--card2); border-radius: 18px; padding: 12px;
+  border: 3px solid transparent; box-shadow: 0 5px 0 #1a1150; transition: transform .1s, border-color .2s, background .2s;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.idea-main:active { transform: translateY(3px); box-shadow: 0 2px 0 #1a1150; }
+.idea.on .idea-main { border-color: var(--teal); background: #2c3f86; }
+.idea-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.idea-emoji { font-size: 30px; line-height: 1; }
+.idea-check { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; font-weight: 900; background: #120b30; color: var(--muted); font-size: 18px; transition: transform .15s; }
+.idea-check.on { background: var(--teal); color: #06302a; animation: stamp .35s both; }
+.idea-title { font-size: 16px; line-height: 1.2; }
+.idea-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.idea-tag { font-size: 11px; font-weight: 900; background: #0004; border-radius: 99px; padding: 2px 8px; }
+.idea-tag.gold { background: var(--yellow); color: #2a1600; }
+.idea-text { margin: 2px 0 4px; font-size: 13px; font-weight: 700; color: var(--muted); line-height: 1.35; flex: 1; }
+.idea-voters { display: flex; align-items: center; min-height: 24px; }
+.idea-voters img { margin-right: -7px; border: 2px solid var(--card2); }
+.idea-count { margin-left: 12px; font-weight: 900; font-size: 13px; }
+.idea-del { position: absolute; top: 46px; right: 10px; width: 28px; height: 28px; border-radius: 9px; background: #0005; font-size: 12px; }
+.idea-error { background: rgba(255, 77, 94, .16); border: 2px solid var(--red); border-radius: 14px; padding: 10px 12px; font-weight: 800; font-size: 14px; }
+textarea.input { resize: vertical; font-size: 16px; }
