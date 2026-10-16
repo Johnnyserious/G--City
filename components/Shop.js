@@ -183,6 +183,7 @@ export default function Shop({ onClose, notice }) {
             </div>
           )}
 
+          {tab !== 'joker' && <div className="muted center" style={{ fontSize: 12, fontWeight: 700 }}>Alle Preise inkl. 19 % MwSt.</div>}
           {tab !== 'joker' && (
             <label className="consent">
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />

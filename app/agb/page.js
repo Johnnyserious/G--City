@@ -14,7 +14,7 @@ export default function AGB() {
       <h2>3. Konto</h2>
       <p>Käufe erfordern ein Konto (E-Mail und Passwort). Du bist für die Geheimhaltung deines Passworts verantwortlich. Käufe sind Personen ab 18 Jahren oder Minderjährigen mit Zustimmung der Erziehungsberechtigten vorbehalten.</p>
       <h2>4. Vertragsschluss und Preise</h2>
-      <p>Mit Klick auf den Preis und Abschluss der Zahlung bei unserem Zahlungsdienstleister Stripe gibst du ein verbindliches Angebot ab; der Vertrag kommt mit der Gutschrift in deinem Konto zustande. Alle Preise sind Endpreise in Euro.</p>
+      <p>Mit Klick auf den Preis und Abschluss der Zahlung bei unserem Zahlungsdienstleister Stripe gibst du ein verbindliches Angebot ab; der Vertrag kommt mit der Gutschrift in deinem Konto zustande. Alle Preise sind Endpreise in Euro inklusive der gesetzlichen Umsatzsteuer.</p>
       <h2>5. Zahlung</h2>
       <p>Die Zahlung erfolgt über Stripe (z. B. Karte, Apple Pay, Google Pay, PayPal, Klarna – je nach Verfügbarkeit). Es gelten zusätzlich die Bedingungen des Zahlungsdienstleisters.</p>
       <h2>6. Widerrufsrecht</h2>
