@@ -132,7 +132,7 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Login: **E-Mail + Passwort** über Supabase Auth (`lib/account.js`, inkl. Passwort vergessen). Spielen geht weiter ohne Konto.
 - Datenbank: `supabase/shop.sql` (Tabellen `wallets`, `inventory`, `coin_ledger` + Funktionen `shop_grant/daily/buy/use`). `coin_ledger.ref` = Stripe-Session → Käufe werden nie doppelt gutgeschrieben.
 - Server: `lib/wallet.js`, API `GET/POST /api/shop` (wallet, daily, buy, use, checkout, confirm) und `POST /api/stripe/webhook`. Stripe wird direkt per REST angesprochen (kein npm-Paket), Checkout mit `price_data` – **in Stripe müssen keine Produkte angelegt werden**. Nach dem Bezahlen bestätigt `confirm` den Kauf; der Webhook ist die Absicherung, falls jemand das Fenster schließt.
-- Umgebungsvariablen: `STRIPE_SECRET_KEY` (sk_test_… / sk_live_…), optional `STRIPE_WEBHOOK_SECRET` (whsec_…). Lokal testen: `MOCK_DB=1` simuliert Login (Token `mock:<id>`) und Bezahlung ohne Stripe.
+- Umgebungsvariablen: `STRIPE_SECRET_KEY` (sk_test_… / sk_live_… oder eingeschränkt rk_… mit nur „Checkout Sessions: Schreiben“), optional `STRIPE_WEBHOOK_SECRET` (whsec_…). Lokal testen: `MOCK_DB=1` simuliert Login (Token `mock:<id>`) und Bezahlung ohne Stripe.
 - Hinweis: Den Verbrauch von Jokern prüft der Server, die Wirkung im Spiel der Host – ein manipulierter Browser könnte sich theoretisch Vorteile erschummeln, aber nie Münzen.
 
 ## Spielideen-Abstimmung (Spielezentrale)
