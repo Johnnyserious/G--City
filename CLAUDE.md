@@ -41,10 +41,11 @@ Nach jeder Änderung an den Variablen ist in Vercel ein **Redeploy** nötig.
 - `/api/board` zieht die Fragen aus der Datenbank (SQL-Funktion `pick_questions`). Dabei kommen die am wenigsten benutzten zuerst, `times_used` wird hochgezählt. Fehlt etwas, wird es **einmalig live** erzeugt und gleich gespeichert.
 - `POST /api/question` ist der Fallback für ein einzelnes Feld, falls der Pool leer ist (z. B. nach einem Host-Wechsel).
 - **Auffüllen im Hintergrund** (`lib/questions.js` → `refill`):
-  - Nach jeder Board-Anfrage füllt `after()` Kombinationen auf, bei denen es weniger als `LOW_WATER` (8) ungenutzte Fragen gibt.
+  - Nach jeder Board-Anfrage füllt `after()` Kombinationen auf, bei denen es weniger als `LOW_WATER` (12) ungenutzte Fragen gibt.
   - Ein täglicher Cron (`vercel.json`) ruft `GET /api/refill` auf.
   - Die Seite **`/admin`** füllt in einer Schleife auf, solange der Tab offen ist. Ziel sind 400 Fragen pro Thema und Stufe, also 2.000 pro Thema.
   - Claude erzeugt die Fragen in Paketen zu 10 (`generateBatch`). Doppelte Fragen verhindert ein Unique-Index auf `(category, lower(question))`.
+- **Abwechslung im Board:** `pickBoard` zieht pro Feld 4 Kandidaten und `lib/variety.js` (`diversify`) wählt pro Thema die 10 Fragen mit den wenigsten Überschneidungen (gleiche Antwort, gleiche seltene Wörter wie Filmtitel/Namen). So kommt z. B. nicht 3× derselbe Film. Der Prompt verlangt außerdem: jede Frage ein anderes Motiv.
 - Kosten: ca. 0,0002 $ pro Frage mit Haiku 5.5. Volle Datenbank (38 Themen × 2.000) ≈ 15 $, Startpaket ≈ 1 $.
 
 ## Wichtige Fallen (schon gelöst, nicht wieder einbauen)
@@ -58,7 +59,7 @@ Nach jeder Änderung an den Variablen ist in Vercel ein **Redeploy** nötig.
 ## Themen und Schwierigkeit
 
 - Die Themen stehen in `lib/engine.js` → `CATEGORIES`, mit `group: 'pop'` oder `'edu'`. Jedes Board hat **3 Pop- und 2 Bildungsthemen**. Der Themenname ist auch der Schlüssel in der Datenbank: Wird er umbenannt, gelten die alten Fragen dafür nicht mehr.
-- Die Beschreibung der Schwierigkeit steht in `lib/questions.js` → `LEVELS`, die Stil-Regeln in `RULES`. Stufe 1 = 20/100 Punkte, Stufe 5 = 100/500 Punkte. Vorgabe von Jonas: 100 machbar, aber nicht geschenkt. Die höheren Stufen sollen gut beantwortbar bleiben (im Oktober 2026 auf seinen Wunsch leichter gemacht): 500 = etwas anspruchsvoller, aber mit gutem Allgemeinwissen lösbar, keine Expertenfragen. Alles auf Schul-/Abiturniveau.
+- Die Beschreibung der Schwierigkeit steht in `lib/questions.js` → `LEVELS`, die Stil-Regeln in `RULES`. Stufe 1 = 20/100 Punkte, Stufe 5 = 100/500 Punkte. Vorgabe von Jonas: 100 machbar, aber nicht geschenkt. Mitte Oktober 2026 erst leichter, dann auf Jonas' Wunsch wieder **etwas schwerer** gemacht: 100 = machbar mit kleinem Twist, 500 = anspruchsvoll, aber fair (bekanntes Thema, weniger bekanntes Detail), keine reinen Expertenfragen. Alles auf Schul-/Abiturniveau.
 - Ändert man die Schwierigkeit, betrifft das nur **neu erzeugte** Fragen. Alte löscht man in Supabase im SQL Editor, z. B. `delete from questions where level = 5;`.
 
 ## Lokal testen (ohne Konten und ohne Kosten)
@@ -81,16 +82,17 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Start in der Spielezentrale → Auswahl **📱 Ein Handy** oder **🌐 Online**.
 - Regeln (`lib/imposter.js`, reine Funktionen): 2 Wort-Runden, jeder sagt reihum ein Wort (20 s), dann 60 s Diskussion (Chat), Abstimmung. Erwischter Imposter darf das Wort raten (30 s), trifft er, gewinnt er trotzdem. Anzahl Imposter: 1, 2 (ab 5 Spielern) oder „Überraschung“ (0–2, dann gibt es beim Voten „Keiner“). Punkte: Crew-Sieg +1, Imposter-Sieg +3.
 - Wörter in `lib/imposterWords.js`: Paare [Lösungswort, Tippwort], nach Themen. Neue Wörter einfach dort eintragen.
-- `components/RevealCard.js`: Karte hochziehen und festhalten, beim Loslassen fällt sie zurück. Lösungswort blau, Tippwort rot.
+- `components/RevealCard.js`: Karte **antippen = bleibt offen**, nochmal antippen = zu (Jonas' Wunsch, Okt. 2026). Kurze Sperre nach jedem Umschalten; auf einem Handy (`ImposterLocal`) höchstens 2× aufdecken (`maxOpens`). Lösungswort blau, Tippwort rot.
+- Imposter-Anzahl: 1, 2 (ab 5), **3 (ab 8 Spielern)** oder Überraschung (ab 8 Spielern 0–3).
 - Online: Raum wird mit `game: 'imposter'` erstellt (`sessionStorage qa_game_CODE`), `lib/room.js` leitet Aktionen an `imposterAction`, Timer an `imposterTick` weiter. Oberfläche: `components/ImposterRoom.js`.
 - Ein Handy: `components/ImposterLocal.js`, läuft komplett im Browser ohne Supabase. Spielerliste wird in localStorage (`imp_local`) gemerkt.
 
 ## Make it Meme (fertig)
 
 - Online mit Raum-Code (`game: 'meme'`). Host stellt 3/5/7 Runden und 60/90/120 s Schreibzeit ein. Mindestens 3 Spieler.
-- Ablauf pro Runde: Jeder bekommt eine eigene Vorlage (1× neu würfeln), schreibt Text oben/unten → alle Memes anonym nacheinander (25 s je Meme): 1–5 Sterne + raten, von wem es ist → Auflösung mit Zwischenstand. Am Ende gewinnen alle mit der höchsten Punktzahl (Gleichstand = mehrere Sieger).
-- Punkte: Sterne gehen an den Ersteller, richtig geraten +3.
-- Vorlagen: `GET /api/memes` lädt ~100 Vorlagen von api.imgflip.com (1× pro Tag), Ersatzliste in `lib/memeTemplates.js`. Bilder kommen direkt von i.imgflip.com.
+- Ablauf pro Runde: Jeder bekommt eine eigene Vorlage (1× neu würfeln) und **tippt ins Bild, wo Text hin soll** (bis 6 Textfelder, verschiebbar, Größe A−/A+; gespeichert als `boxes: [{x, y, size, text}]`, x/y = Mitte 0–1) → alle Memes anonym nacheinander (25 s je Meme): 1–5 Sterne + raten, von wem es ist → Auflösung mit Rangliste.
+- Wertung (Host-Einstellung `scoring`): **'guess' (Standard)** = Rangliste nach richtig erratenen Memes (🎯), ⭐ entscheiden bei Gleichstand; 'mix' = Sterne + richtig geraten ×3. Rangliste `MemeRanking` unten mit 🎯 und ⭐ (`s.stats`), wird erst am Rundenende aktualisiert (sonst verrät sie die Ersteller).
+- Vorlagen: `GET /api/memes` lädt ~100 von api.imgflip.com + ~200 von api.memegen.link (1× pro Tag, ohne Bildgröße → wird im Browser ermittelt), Ersatzliste in `lib/memeTemplates.js`.
 - Regeln `lib/meme.js` (`memeAction`, `memeTick`), Oberfläche `components/MemeRoom.js`, Meme-Darstellung `components/MemeImage.js` (Schrift Anton, wie Impact).
 
 ## Zeichenspiel (fertig)
@@ -105,14 +107,14 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Spielezentrale → **📱 Ein Handy** oder **🌐 Online** (`game: 'bluff'`), ab 3 Spielern. Host stellt 5/8/10 Fragen, 45/60/90 s Lügen-Zeit und Themen ein (mehrere oder „Alles gemischt“).
 - Ablauf pro Frage: normale Frage mit kurzer, überraschender Antwort → jeder schreibt eine Lüge (wer aus Versehen die Wahrheit tippt, wird gewarnt) → Wahrheit + Lügen gemischt (gleiche Lügen zusammengelegt), jeder wählt (eigene Lüge gesperrt, 30 s) und kann Lügen mit 👍 liken → Auflösung mit Erklärung.
 - Punkte: Wahrheit gefunden +3, jeder Reingefallene +2 für den Lügner, jedes 👍 +1. Mehrere Sieger bei Gleichstand.
-- Fragen: Startliste (91 Fragen, 9 Themen) in `lib/bluffQuestions.js`. Sie wird beim ersten Abruf in die Tabelle `questions` gelegt (category `Lügen: <Thema>`, level 1) – **keine eigene Tabelle, kein SQL nötig**. `POST /api/bluff` zieht die am wenigsten benutzten Fragen, danach füllt `after()` Themen mit < 12 ungenutzten Fragen per Claude auf (`lib/bluffServer.js`). Das Quiz-Auffüllen und `/admin` ignorieren diese Kategorien.
+- Fragen: Startliste (136 Fragen, 9 Themen) in `lib/bluffQuestions.js`. Sie wird beim ersten Abruf in die Tabelle `questions` gelegt (category `Lügen: <Thema>`, level 1) – **keine eigene Tabelle, kein SQL nötig**. `POST /api/bluff` zieht die am wenigsten benutzten Fragen, danach füllt `after()` Themen mit < 12 ungenutzten Fragen per Claude auf (`lib/bluffServer.js`). Das Quiz-Auffüllen und `/admin` ignorieren diese Kategorien.
 - Online: `start` setzt `phase: 'loading'`, der Host lädt dann in seinem Timer (`lib/room.js`) die Fragen und ruft `bluffLoaded`. Regeln `lib/bluff.js`, Oberfläche `components/BluffRoom.js`, Ein Handy `components/BluffLocal.js` (Spielerliste aus Imposter wird übernommen), gemeinsame Teile `components/BluffParts.js`.
 
 ## Emoji-Rätsel (fertig)
 
 - Online mit Raum-Code (`game: 'emoji'`), ab 2 Spielern. Host stellt 10/15/20 Rätsel, 30/45/60 s pro Rätsel und Themen ein (Wörter, Filme & Serien, Essen & Trinken, Marken & Apps oder gemischt).
 - Immer 2–3 Emojis → ein Begriff. Alle raten gleichzeitig, mehrere Versuche erlaubt. Richtig: 1. +5, 2. +3, 3. +2, danach +1. Falsche Tipps sehen alle, „ganz nah dran“ ohne Text. Nach 40 % der Zeit Lücken (Buchstabenzahl), nach 70 % der erste Buchstabe. Sind alle fertig, kommt die Auflösung (5 s), dann das nächste Rätsel.
-- Rätsel (138 Stück) in `lib/emojiPuzzles.js` als [Emojis, Lösung, [weitere Antworten]] – einfach erweitern. Antwortprüfung ignoriert Artikel und einen Tippfehler (`checkEmoji` in `lib/emoji.js`). Oberfläche `components/EmojiRoom.js`.
+- Rätsel (~300 Stück) in `lib/emojiPuzzles.js` als [Emojis, Lösung, [weitere Antworten]] – einfach erweitern. Antwortprüfung ignoriert Artikel und einen Tippfehler (`checkEmoji` in `lib/emoji.js`). Oberfläche `components/EmojiRoom.js`.
 
 ## Schätz-Duell (fertig)
 
@@ -121,7 +123,7 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - **Duelle 1 gegen 1:** pro Frage zwei Spieler (wer am wenigsten dran war, möglichst nicht dasselbe Paar zweimal hintereinander). Näher dran +5, Gleichstand je +3. Alle anderen wetten vorher: richtig +2 (bei Gleichstand +1).
 - Exakt getroffen +3 Bonus. **Doppelt-Joker:** einmal pro Spiel Punkte einer Frage ×2 (auch für Wetten).
 - Zahleneingabe versteht deutsche Formate („13.200“, „5,5“) und zeigt eine Vorschau (`parseNum`).
-- **Nur feste, geprüfte Fragen** (81 Stück, 7 Themen) in `lib/estimateQuestions.js` – Jonas wollte hier ausdrücklich keine KI-Fragen. Format [Frage, Zahl, Einheit, Erklärung]; Einheit `'Jahr'` = Jahreszahl.
+- **Nur feste, geprüfte Fragen** (158 Stück, 7 Themen) in `lib/estimateQuestions.js` – Jonas wollte hier ausdrücklich keine KI-Fragen. Format [Frage, Zahl, Einheit, Erklärung]; Einheit `'Jahr'` = Jahreszahl.
 - Regeln `lib/estimate.js`, Oberfläche `components/EstimateRoom.js`, Ein Handy `components/EstimateLocal.js`, gemeinsame Teile `components/EstimateParts.js`.
 
 ## Shop: Münzen, Joker, Bundles (Echtgeld über Stripe)
@@ -134,6 +136,13 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Server: `lib/wallet.js`, API `GET/POST /api/shop` (wallet, daily, buy, use, checkout, confirm) und `POST /api/stripe/webhook`. Stripe wird direkt per REST angesprochen (kein npm-Paket), Checkout mit `price_data` – **in Stripe müssen keine Produkte angelegt werden**. Neue Stripe-Konten haben „Managed Payments“ (Stripe als Merchant of Record, verlangt Steuer-Codes) standardmäßig an → wir senden `managed_payments[enabled]=false`, weil Serious Innovations selbst verkauft. Nach dem Bezahlen bestätigt `confirm` den Kauf; der Webhook ist die Absicherung, falls jemand das Fenster schließt.
 - Umgebungsvariablen: `STRIPE_SECRET_KEY` (sk_test_… / sk_live_… oder eingeschränkt rk_… mit nur „Checkout Sessions: Schreiben“), optional `STRIPE_WEBHOOK_SECRET` (whsec_…). Lokal testen: `MOCK_DB=1` simuliert Login (Token `mock:<id>`) und Bezahlung ohne Stripe.
 - Hinweis: Den Verbrauch von Jokern prüft der Server, die Wirkung im Spiel der Host – ein manipulierter Browser könnte sich theoretisch Vorteile erschummeln, aber nie Münzen.
+
+## Spieler bleiben dabei (Okt. 2026)
+
+- Bis 16 Spieler pro Raum (`MAX_PLAYERS` in `lib/room.js`), alle Spiele getestet mit 10.
+- Wer kurz weg ist (Handy gesperrt, Funkloch), wird bei einer neuen Runde **3 Minuten lang trotzdem eingeplant** (`activeIds`, `offAt` in `lib/engine.js`). Wer mitten in einer Runde (wieder) kommt, spielt sofort mit (`joinLate` in den Ticks von Meme, Lügen-Quiz, Schätz-Duell; beim Zeichenspiel hinten in die Mal-Reihenfolge). Nur Imposter wartet bis zur nächsten Runde (geheimes Wort).
+- Beim Zurückkommen in den Tab meldet sich der Browser sofort neu an (`visibilitychange` in `lib/room.js`).
+- Test-Hinweis: Im Sandbox-Chromium stürzt die Seite manchmal ab, wenn Meme-Bilder nicht laden (Proxy blockt imgflip/memegen). In Playwright deshalb Bilder per `ctx.route` mit einem Testbild beantworten.
 
 ## Dev-Mode (nur Jonas) + Auftrags-Inbox
 

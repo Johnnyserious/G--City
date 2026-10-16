@@ -296,6 +296,7 @@ h1, h2, h3, .display { font-family: var(--display); font-weight: 400; letter-spa
   transition: transform .28s cubic-bezier(.3,1.4,.5,1);
 }
 .reveal-cover.drag { transition: none; cursor: grabbing; }
+.reveal-cover.locked { filter: grayscale(.6) brightness(.8); cursor: default; }
 .cover-face { display: flex; flex-direction: column; align-items: center; gap: 10px; pointer-events: none; }
 .reveal-grip { display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: none; font-size: 15px; }
 .reveal-grip .muted { color: #ffffffb0; font-weight: 700; font-size: 13px; }
@@ -380,6 +381,19 @@ textarea.input { resize: vertical; font-size: 16px; }
 }
 .meme-text.top { top: 2.5%; }
 .meme-text.bottom { bottom: 2.5%; }
+/* Frei platzierte Textfelder (x/y = Mitte des Felds) */
+.meme-box { position: absolute; height: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.meme-box-t {
+  display: block; max-width: 100%; text-align: center; text-transform: uppercase; line-height: 1.08;
+  font-family: 'Anton', Impact, 'Arial Black', sans-serif; color: #fff; letter-spacing: .5px; overflow-wrap: anywhere;
+  -webkit-text-stroke: .35cqw #000; paint-order: stroke fill;
+  text-shadow: 0 0 .6cqw #000, .3cqw .3cqw 0 #000, -.3cqw -.3cqw 0 #000, .3cqw -.3cqw 0 #000, -.3cqw .3cqw 0 #000;
+}
+.meme-box-t.edit { pointer-events: auto; cursor: grab; touch-action: none; min-width: 3em; min-height: 1.1em; border-radius: 6px; outline: 2px dashed #ffffff70; outline-offset: 2px; }
+.meme-box-t.sel { outline: 3px solid var(--yellow); background: #00000030; }
+.meme-box-ph { opacity: .55; }
+.meme-stat { font-weight: 800; font-size: 13px; background: #120b30; border-radius: 99px; padding: 3px 8px; white-space: nowrap; }
+.meme-rank .rank-list > div { gap: 6px; }
 .meme-broken { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: #fff; font-weight: 800; padding: 10px; background: #222; }
 .stars { display: flex; gap: 6px; justify-content: space-between; }
 .star { flex: 1; font-size: 38px; line-height: 1; padding: 8px 0; border-radius: 14px; background: #120b30; color: #ffffff30; transition: transform .1s, color .15s; }

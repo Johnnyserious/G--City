@@ -81,13 +81,14 @@ export function ImposterSettings({ settings, onChange, disabled, playerCount }) 
   const opts = [
     { v: 1, label: '1 Imposter' },
     { v: 2, label: '2 Imposter', need: 5 },
-    { v: 'random', label: '🎲 Überraschung', sub: '0, 1 oder 2 – keiner weiß es' },
+    { v: 3, label: '3 Imposter', need: 8 },
+    { v: 'random', label: '🎲 Überraschung', sub: '0 bis 2 (ab 8 Spielern bis 3) – keiner weiß es' },
   ];
   return (
     <div className="stack">
       <div>
         <div className="muted" style={{ fontWeight: 800, marginBottom: 6 }}>Wie viele Imposter?</div>
-        <div className="seg">
+        <div className="seg seg-wrap">
           {opts.map((o) => (
             <button
               key={o.v}
