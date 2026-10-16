@@ -135,6 +135,19 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Umgebungsvariablen: `STRIPE_SECRET_KEY` (sk_test_… / sk_live_… oder eingeschränkt rk_… mit nur „Checkout Sessions: Schreiben“), optional `STRIPE_WEBHOOK_SECRET` (whsec_…). Lokal testen: `MOCK_DB=1` simuliert Login (Token `mock:<id>`) und Bezahlung ohne Stripe.
 - Hinweis: Den Verbrauch von Jokern prüft der Server, die Wirkung im Spiel der Host – ein manipulierter Browser könnte sich theoretisch Vorteile erschummeln, aber nie Münzen.
 
+## Dev-Mode (nur Jonas) + Auftrags-Inbox
+
+- Sichtbar nur, wenn Jonas mit **jonas.goldenpost.media@gmail.com** im Shop eingeloggt ist (`lib/dev.js`, Server prüft zusätzlich; weitere Mails per `DEV_EMAILS` in Vercel). Knopf **🛠️** oben in der Spielezentrale → `components/DevPanel.js`.
+- **Bots:** In jeder Online-Lobby „🤖 Bot hinzufügen“ (nur Dev + Host). Bots sind Spieler mit `bot: true`, nicht in der Presence (`syncPlayers` überspringt sie). `lib/bots.js` → `botPlans(s)` sagt pro Spiel, was jeder Bot tun würde; der Host-Timer in `lib/room.js` führt jeden Plan einmal nach 1,5–10 s aus. Bots können nicht malen (geben als Zeichner auf). Zufalls-Entscheidungen pro Runde über `chance(key)` stabil halten.
+- **Inbox = GitHub-Issues mit Label `dev-inbox`** im Repo `Johnnyserious/G--City` (`lib/devServer.js`, API `/api/dev`, braucht `GITHUB_TOKEN` in Vercel: fine-grained, nur dieses Repo, Issues/Pull requests/Contents RW + Deployments R).
+- **Wenn Jonas im Chat „Inbox“ schreibt (nur auf Zuruf, kein Automatismus):**
+  1. `gh api "repos/Johnnyserious/G--City/issues?labels=dev-inbox&state=open"` lesen (inkl. Kommentare – Antworten von Jonas beginnen mit „**Jonas (Dev-Mode):**“).
+  2. Pro Auftrag: Branch `dev/<nr>` von `main`, umsetzen, lokal testen, normal bauen, Branch pushen.
+  3. Pull Request per REST: `gh api repos/Johnnyserious/G--City/pulls -f title=… -f head=dev/<nr> -f base=main -f body="Closes #<nr> …"` (GraphQL/`gh pr create` geht in dieser Umgebung nicht).
+  4. Kommentar ins Issue: kurz auf Deutsch, was geändert wurde und was er testen soll. Bei Unklarheit stattdessen nur eine Rückfrage kommentieren (Status „Rückfrage“ im Dev-Mode).
+  5. Vercel baut automatisch eine Vorschau; Jonas schaltet im Dev-Mode mit „🚀 Live schalten“ frei (merged den PR, Squash). Niemals selbst nach `main` mergen, außer Jonas sagt es.
+- Status im Dev-Mode: Wartet (offen, kein PR) · Rückfrage (letzter Kommentar nicht von Jonas) · Vorschau bereit (PR offen, Link aus GitHub-Deployments) · Live (PR gemerged) · Verworfen.
+
 ## Spielideen-Abstimmung (Spielezentrale)
 
 - Oben in der Spielezentrale (`components/IdeaBoard.js`): Ideen antippen = Stimme, beliebig viele pro Person, eigene Ideen schreiben (max. 10 pro Person, eigene wieder löschbar).

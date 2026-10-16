@@ -1,11 +1,13 @@
 'use client';
 import { useState } from 'react';
+import { useIsDev } from './DevPanel';
 import Avatar from './Avatar';
 import IdeaBoard from './IdeaBoard';
 import { CoinChip } from './Shop';
 import { sfx, isMuted, setMuted } from '@/lib/sound';
 
-export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal, onShop }) {
+export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal, onShop, onDev }) {
+  const isDev = useIsDev();
   const [code, setCode] = useState('');
   const [muted, setM] = useState(isMuted());
   const [toast, setToast] = useState('');
@@ -23,6 +25,7 @@ export default function GameCenter({ me, onEdit, onCreate, onJoin, onLocal, onSh
       <div className="topbar">
         <div className="logo">G <span>City</span></div>
         <div className="row">
+          {isDev && <button className="icon-btn" title="Dev-Mode" aria-label="Dev-Mode" onClick={() => { sfx.click(); onDev(); }}>🛠️</button>}
           <CoinChip onClick={() => { sfx.click(); onShop(); }} />
           <button className="icon-btn" onClick={() => { setMuted(!muted); setM(!muted); }} aria-label="Ton">{muted ? '🔇' : '🔊'}</button>
           <button className="row" onClick={onEdit} style={{ background: 'var(--card2)', borderRadius: 99, padding: '4px 14px 4px 4px', fontWeight: 800 }}>

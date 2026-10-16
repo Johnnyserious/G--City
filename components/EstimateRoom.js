@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { DevBots } from './DevPanel';
 import JokerBag, { ShopToggle } from './JokerBag';
 import confetti from 'canvas-confetti';
 import Avatar from './Avatar';
@@ -67,6 +68,7 @@ function EstLobby({ room, me, code }) {
         <EstSettings settings={s.settings} disabled={!isHost} onChange={(x) => send('settings', x)} />
         {!isHost && <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginTop: 8 }}>Nur der Host kann das ändern.</div>}
       </div>
+      <DevBots room={room} me={me} />
       <ShopToggle room={room} me={me} />
       <EstRules />
       {isHost ? (

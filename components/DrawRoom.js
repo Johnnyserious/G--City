@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { DevBots } from './DevPanel';
 import { revealFor } from '@/lib/shopGame';
 import JokerBag, { ShopToggle } from './JokerBag';
 import confetti from 'canvas-confetti';
@@ -90,6 +91,7 @@ function DrawLobby({ room, me, code }) {
         <Settings s={s} send={send} disabled={!isHost} />
         {!isHost && <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginTop: 8 }}>Nur der Host kann das ändern.</div>}
       </div>
+      <DevBots room={room} me={me} />
       <ShopToggle room={room} me={me} />
       <details className="card rules">
         <summary className="display" style={{ fontSize: 20 }}>So geht’s 📖</summary>

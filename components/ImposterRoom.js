@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { DevBots } from './DevPanel';
 import confetti from 'canvas-confetti';
 import Avatar from './Avatar';
 import RevealCard, { SecretWord } from './RevealCard';
@@ -104,6 +105,7 @@ function ImpLobby({ room, me, code }) {
         <ImposterSettings settings={s.settings} disabled={!isHost} playerCount={players.length} onChange={(x) => send('settings', x)} />
         {!isHost && <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginTop: 8 }}>Nur der Host kann das ändern.</div>}
       </div>
+      <DevBots room={room} me={me} />
       <RulesBox />
       {isHost ? (
         <button className="btn big full pink" disabled={!enough} onClick={() => { sfx.fanfare(); send('start'); }}>

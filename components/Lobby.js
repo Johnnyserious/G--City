@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { DevBots } from './DevPanel';
 import { ShopToggle } from './JokerBag';
 import Avatar from './Avatar';
 import { sfx } from '@/lib/sound';
@@ -69,6 +70,7 @@ export default function Lobby({ room, me, code }) {
         </div>
       </div>
 
+      <DevBots room={room} me={me} />
       <ShopToggle room={room} me={me} />
       {isHost ? (
         <button className="btn big full pink" onClick={() => { sfx.fanfare(); send('start'); }}>Spiel starten 🚀</button>

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import DevPanel from './DevPanel';
 import ProfileEditor from './ProfileEditor';
 import GameCenter from './GameCenter';
 import Room from './Room';
@@ -36,6 +37,7 @@ export default function App() {
   const [local, setLocal] = useState(null); // Spiel auf einem Handy, ohne Raum
   const [shop, setShop] = useState(() => new URLSearchParams(window.location.search).has('shop'));
   const [shopNotice, setShopNotice] = useState('');
+  const [dev, setDev] = useState(false);
   const acc = useAccount();
 
   // Rückkehr von Stripe: Kauf bestätigen und gutschreiben
@@ -106,6 +108,9 @@ export default function App() {
       </>
     );
   }
+  if (dev) {
+    return <DevPanel onClose={() => setDev(false)} onCreate={(g) => { setDev(false); createRoom(g); }} />;
+  }
   if (shop) {
     return <Shop notice={shopNotice} onClose={() => { setShop(false); setShopNotice(''); }} />;
   }
@@ -121,5 +126,5 @@ export default function App() {
   if (editing) {
     return <ProfileEditor initial={profile} onSave={saveProfile} onCancel={() => setEditing(false)} />;
   }
-  return <GameCenter me={profile} onEdit={() => setEditing(true)} onCreate={createRoom} onJoin={goRoom} onLocal={setLocal} onShop={() => setShop(true)} />;
+  return <GameCenter me={profile} onEdit={() => setEditing(true)} onCreate={createRoom} onJoin={goRoom} onLocal={setLocal} onShop={() => setShop(true)} onDev={() => setDev(true)} />;
 }
