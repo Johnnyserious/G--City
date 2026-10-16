@@ -126,6 +126,7 @@ export default function IdeaBoard({ me }) {
                     <b className="idea-title">{idea.title}</b>
                     <div className="idea-tags">
                       {top && <span className="idea-tag gold">🏆 vorne</span>}
+                      {idea.done && <span className="idea-tag done">✅ jetzt spielbar</span>}
                       {idea.planned && <span className="idea-tag">📌 geplant</span>}
                       {idea.custom && <span className="idea-tag">von {idea.author}</span>}
                     </div>

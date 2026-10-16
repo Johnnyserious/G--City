@@ -93,10 +93,17 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Vorlagen: `GET /api/memes` lädt ~100 Vorlagen von api.imgflip.com (1× pro Tag), Ersatzliste in `lib/memeTemplates.js`. Bilder kommen direkt von i.imgflip.com.
 - Regeln `lib/meme.js` (`memeAction`, `memeTick`), Oberfläche `components/MemeRoom.js`, Meme-Darstellung `components/MemeImage.js` (Schrift Anton, wie Impact).
 
+## Zeichenspiel (fertig)
+
+- Online mit Raum-Code (`game: 'draw'`), ab 2 Spielern. Host stellt 1/2/3 Runden (jeder malt pro Runde einmal) und 60/80/100 s Malzeit ein.
+- Zug: Zeichner wählt aus 3 Wörtern (leicht ×1 / mittel ×1,3 / schwer ×1,6 Punkte, 15 s) → malt, alle anderen tippen Tipps. **Wer zuerst richtig tippt, bekommt die Punkte** (100–200 je nach Restzeit × Faktor), der Zeichner +60 × Faktor, dann ist der Zug vorbei. Ein Tippfehler zählt als richtig, zwei = „ganz nah dran“ (Text wird dann nicht gezeigt). Nach 50 % und 75 % der Zeit wird je ein Buchstabe aufgedeckt.
+- Striche laufen **nicht** über den Spielzustand, sondern direkt per Broadcast-Event `draw` vom Zeichner an alle (`room.sendDraw` / `room.subscribeDraw`, alle 70 ms gebündelt, Koordinaten 0–1). Wer neu reinkommt, schickt `need`, der Zeichner antwortet mit `sync` (ganzes Bild).
+- Dateien: Regeln `lib/draw.js`, Wörter `lib/drawWords.js` (einfach erweitern), Zeichenfläche `components/DrawCanvas.js`, Oberfläche `components/DrawRoom.js`.
+
 ## Spielideen-Abstimmung (Spielezentrale)
 
 - Oben in der Spielezentrale (`components/IdeaBoard.js`): Ideen antippen = Stimme, beliebig viele pro Person, eigene Ideen schreiben (max. 10 pro Person, eigene wieder löschbar).
-- Vorgegebene Ideen in `lib/gameIdeas.js` (`key` nie ändern, daran hängen die Stimmen). Eigene Ideen haben den Schlüssel `u<id>`.
+- Vorgegebene Ideen in `lib/gameIdeas.js` (`key` nie ändern, daran hängen die Stimmen). Gebaute Spiele bekommen `done: true` (Anzeige „✅ jetzt spielbar“). Eigene Ideen haben den Schlüssel `u<id>`.
 - Speicher: Supabase-Tabellen `game_ideas` und `idea_votes` (`supabase/ideas.sql`, auch in `setup.sql`). Server: `lib/ideas.js`, API `GET/POST /api/ideas`. Wähler = Profil-ID aus localStorage.
 - Was die Gruppe will, sieht man dort an den Stimmen. Vor dem nächsten Spiel dort nachschauen.
 
@@ -104,5 +111,5 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 
 1. Charade
 2. Wer bin ich?
-3. Zeichenspiel: Einer bekommt ein Wort und malt es, wer zuerst das richtige Wort eintippt, bekommt Punkte. Dann reihum weiter.
+3. ~~Zeichenspiel~~ (fertig)
 4. Danach weitere Spielmöglichkeiten.

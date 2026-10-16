@@ -393,3 +393,33 @@ textarea.input { resize: vertical; font-size: 16px; }
 .meme-result { text-align: center; padding: 12px; }
 .meme-result .row { text-align: left; }
 .meme-result.best { outline: 3px solid var(--yellow); }
+
+/* ---------- Zeichenspiel ---------- */
+.g-draw { background: linear-gradient(135deg, #4be37a, #2ee6c5); color: #06301a; }
+.idea-tag.done { background: var(--green); color: #06301a; }
+.draw-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.draw-word { flex: 1; text-align: center; font-weight: 800; font-size: 18px; min-width: 0; }
+.mask { display: inline-flex; gap: 5px; align-items: baseline; flex-wrap: wrap; justify-content: center; font-family: var(--display); font-size: 26px; letter-spacing: 1px; }
+.mask .gap { width: 10px; }
+.mask small { font-family: var(--body); font-size: 12px; color: var(--muted); margin-left: 4px; }
+.draw-wrap { display: flex; flex-direction: column; gap: 8px; }
+.draw-canvas-box { width: 100%; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 0 #160e45, 0 14px 30px rgba(0,0,0,.35); background: #fff; }
+.draw-canvas { display: block; touch-action: none; }
+.draw-canvas.editable { cursor: crosshair; }
+.draw-tools { display: flex; flex-direction: column; gap: 8px; background: var(--card); border-radius: 16px; padding: 10px; }
+.draw-colors { display: flex; gap: 6px; flex-wrap: wrap; }
+.draw-color { width: 32px; height: 32px; border-radius: 50%; border: 3px solid #ffffff40; transition: transform .1s; }
+.draw-color.on { border-color: #fff; transform: scale(1.15); box-shadow: 0 0 0 2px var(--yellow); }
+.draw-tool { min-width: 44px; height: 40px; border-radius: 12px; background: var(--card2); display: grid; place-items: center; font-size: 18px; border: 3px solid transparent; color: var(--ink); }
+.draw-tool.on { border-color: var(--yellow); }
+.draw-overlay { position: absolute; inset: 0; border-radius: 18px; background: rgba(23, 15, 58, .92); display: grid; place-items: center; padding: 14px; animation: fadeIn .2s both; }
+.draw-overlay.soft { background: rgba(23, 15, 58, .82); }
+.word-choices { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 360px; margin: 0 auto; }
+.word-choices .btn { flex-direction: column; gap: 0; }
+.word-choices .lvl { font-family: var(--body); font-weight: 800; font-size: 12px; opacity: .85; }
+.guess-card { padding: 10px; }
+.guess-feed { max-height: 170px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; font-size: 15px; }
+.guess-line { padding: 4px 8px; border-radius: 10px; font-weight: 700; overflow-wrap: anywhere; }
+.guess-line b { color: var(--yellow); }
+.guess-line.close { background: rgba(255, 138, 61, .18); }
+.guess-line.correct { background: rgba(75, 227, 122, .22); color: var(--green); }
