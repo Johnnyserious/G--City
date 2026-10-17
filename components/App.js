@@ -55,6 +55,10 @@ function AppInner() {
 
   // Festes Profil: im Hintergrund mit dem Server abgleichen (Punkte, Name)
   useEffect(() => {
+    if (profile && !profile.registered && profile.setupSeen) {
+      saveRemote(profile).then((n) => setProfile((p) => storeProfile(merge(p, n)))).catch(() => {});
+      return;
+    }
     if (!profile?.registered) return;
     fetchProfile(profile.id)
       .then((r) => {
@@ -101,8 +105,10 @@ function AppInner() {
     if (p.registered) saveRemote(p).then((r) => setProfile((x) => storeProfile(merge(x, r)))).catch(() => {});
   };
   const onProfileUpdate = (r) => setProfile((p) => storeProfile(merge(p, r)));
+  // Klappt das Speichern auf dem Server nicht (z. B. Tabelle fehlt noch), nicht ständig nachfragen:
+  // Profil bleibt erstmal auf dem Handy und wird im Hintergrund nachgetragen.
   const finishSetup = (p, err) => {
-    setProfile(storeProfile(p));
+    setProfile(storeProfile(err ? { ...p, setupSeen: true } : p));
     if (err) setSetupLater(true);
   };
 
@@ -132,7 +138,7 @@ function AppInner() {
     );
   }
 
-  if (!profile || (!profile.registered && !setupLater)) {
+  if (!profile || (!profile.registered && !profile.setupSeen && !setupLater)) {
     return <ProfileSetup local={profile} joining={!!room} onDone={finishSetup} />;
   }
   if (room) {
