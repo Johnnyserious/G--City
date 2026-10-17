@@ -55,7 +55,7 @@ const STATUS = {
 
 const GAMES = [
   ['quiz', '🧠', 'Quiz'], ['imposter', '🕵️', 'Imposter'], ['meme', '😂', 'Meme'], ['draw', '🎨', 'Zeichnen'],
-  ['bluff', '🤥', 'Lügen-Quiz'], ['emoji', '🦁', 'Emoji'], ['estimate', '📏', 'Schätzen'],
+  ['bluff', '🤥', 'Lügen-Quiz'], ['emoji', '🦁', 'Emoji'], ['estimate', '📏', 'Schätzen'], ['songs', '🎧', 'Songs'],
 ];
 
 // Bots in der Lobby – für jeden Host. Kostet nichts: Bots spielen nach festen Regeln, ohne KI.

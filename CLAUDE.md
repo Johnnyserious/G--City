@@ -127,6 +127,19 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - **Nur feste, geprüfte Fragen** (158 Stück, 7 Themen) in `lib/estimateQuestions.js` – Jonas wollte hier ausdrücklich keine KI-Fragen. Format [Frage, Zahl, Einheit, Erklärung]; Einheit `'Jahr'` = Jahreszahl.
 - Regeln `lib/estimate.js`, Oberfläche `components/EstimateRoom.js`, Ein Handy `components/EstimateLocal.js`, gemeinsame Teile `components/EstimateParts.js`.
 
+## Songs erraten (fertig, Okt. 2026)
+
+- Spielezentrale → **📱 Ein Handy** oder **🌐 Online** (`game: 'songs'`), online ab 1 Spieler (Bots möglich).
+- Online: Etappen 0,2 / 1 / 3 / 5 / 15 s (`STAGES`), Punkte 100/80/60/40/20 (`POINTS`). Falsch oder „Mehr hören“ = nächste Etappe; „ganz nah dran“ und „nur Interpret richtig“ kosten nichts. Host stellt 5/10/15 Runden, 45/60/90 s und Musik-Kategorien ein; Modus **„Jeder eigener Song“ (Standard, Jonas' Wunsch)** oder „Alle denselben“. Keine Doppelten im Spiel, zuletzt gespielte werden gemieden (`usedSongs`).
+- **Vorschläge beim Tippen** (`SongGuessInput`/`suggest` in `components/SongParts.js`) kommen aus unserer eigenen Song-Liste – kein Spotify, kein API-Key.
+- Ein Handy (`components/SongLocal.js`): Song läuft 30 s für alle, man tippt an, wer ihn zuerst hatte: ≤5 s = 3, ≤15 s = 2, sonst 1 Punkt. Zählt (noch) nicht fürs Profil.
+- Songs: `lib/songList.js` ([Interpret, Titel, [weitere Antworten]] je Kategorie; einfach erweitern). Server `lib/songServer.js` sucht beim Start die kostenlose 30-s-Hörprobe bei **Deezer** (Ersatz iTunes, beide ohne Schlüssel) und überspringt Songs ohne eindeutigen Treffer. `POST /api/songs`, Audio läuft über `GET /api/songs/audio?u=…` (nur dzcdn.net/apple.com erlaubt), damit der Browser es per Web Audio schneiden darf. Mock: `MOCK_AI=1` liefert Pieptöne.
+- Browser: `lib/songAudio.js` lädt + dekodiert, sucht die erste laute Stelle (≈ Hook/Refrain, mind. 15 s Rest) und spielt Ausschnitte ab. Abspielen nur im Tipp (iPhone). Regeln `lib/songs.js`, Oberfläche `components/SongRoom.js`.
+
+## „Das ist neu“ nach Updates
+
+- `lib/changelog.js`: neuen Eintrag **oben** mit neuer `id` anlegen, ein Punkt pro Bildschirm. `components/WhatsNew.js` zeigt ihn einmal pro Handy (localStorage `gcity_seen_changelog`), ganz neue Nutzer bekommen ihn nicht. Bei jedem größeren Update pflegen!
+
 ## Shop: Münzen, Joker, Bundles (Echtgeld über Stripe)
 
 - Ziel: Projekt finanzieren. Jonas verkauft über sein Gewerbe **Serious Innovations** (Inhaber Jonas Ernst, Breite Straße 23, 14467 Potsdam); das Stripe-Konto heißt ebenfalls Serious Innovations. **Regelbesteuert (19 % USt, keine USt-IdNr.)** → Preise sind inkl. MwSt. Vor dem Live-Schalten: Daten in `lib/legal.js` eintragen (Impressum/AGB/Widerruf/Datenschutz unter `/impressum`, `/agb`, `/widerruf`, `/datenschutz`; Platzhalter werden gelb markiert) und rechtlich prüfen lassen.
@@ -156,7 +169,7 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - **Bots für alle:** `DevBots` (in jeder Lobby) für jeden Host, max. 16 Spieler. Bots spielen nach festen Regeln, kein KI-Aufruf.
 - **Startseite** (`GameCenter.js`): Kopf mit Logo/Shop/Ton/Avatar (→ Profil), Code-Feld, Spiele-Kacheln (2 Spalten am Handy), unten: Ideen (zugeklappt), „Fehler melden & Wünsche“ (`SupportSheet` → `POST /api/support` → GitHub-Issue `[Support] …` mit Label `dev-inbox`, max. 8 pro Stunde und IP), „Unsere Apps“ (Liste `APPS`, Eventradar = https://eventradar.club).
 - **Support-Meldungen in der Inbox** kommen von Spielern, nicht von Jonas: kleine Bugs direkt fixen, größere Änderungen erst mit Jonas abstimmen.
-- **Chat** unten links (`Chat.js`), daneben die 5 meistgenutzten Emojis (`lib/emojiUse.js`, nur auf dem Handy gespeichert), ＋ öffnet `EmojiPicker` (alle Emojis bis Version 15.1 aus `public/emoji.json`, deutsch durchsuchbar; erzeugt aus `emojibase-data`).
+- **Chat** unten links (`Chat.js`), daneben 5 **feste** Schnell-Emojis (Jonas: dürfen nicht umspringen, damit man spammen kann), ＋ öffnet `EmojiPicker` (alle Emojis bis Version 15.1 aus `public/emoji.json`, deutsch durchsuchbar; erzeugt aus `emojibase-data`).
 - **Haptik:** `haptic()` in `lib/sound.js` (Android `navigator.vibrate`, iPhone über den Schalter-Trick ab iOS 18). Jeder Knopfdruck vibriert kurz (abschaltbar im Profil).
 - **Look:** dunkle Konturen (`--line`), Knöpfe mit Glanzkante und Plopp-Effekt. Hintergrund liegt auf `body::before` (kein `background-attachment: fixed`, das ließ iPhones beim Scrollen springen).
 

@@ -10,6 +10,7 @@ import { levelInfo } from '@/lib/player';
 
 // Spiele in der Spielezentrale. mode: 'choose' = Ein Handy oder Online, sonst direkt online.
 const GAMES = [
+  { key: 'songs', cls: 'g-songs', emoji: '🎧', name: 'Songs erraten', tag: 'Ab 0,2 Sekunden – kennst du ihn?', choose: true, isNew: true },
   { key: 'quiz', cls: 'g-quiz', emoji: '🧠', name: 'Quiz-Board', tag: '5 Themen, Joker & Veto' },
   { key: 'imposter', cls: 'g-imp', emoji: '🕵️', name: 'Imposter', tag: 'Einer kennt das Wort nicht', choose: true },
   { key: 'meme', cls: 'g-meme', emoji: '😂', name: 'Make it Meme', tag: 'Betexten, bewerten, raten' },
@@ -124,6 +125,7 @@ export default function GameCenter({ me, onEdit, onProfile, onCreate, onJoin, on
       <div className="games">
         {GAMES.map((g) => (
           <button key={g.key} className={'game-card ' + g.cls} onClick={() => start(g)}>
+            {g.isNew && <span className="new-badge">NEU</span>}
             <span className="emoji">{g.emoji}</span>
             <h3>{g.name}</h3>
             <p>{g.tag}</p>
@@ -135,13 +137,13 @@ export default function GameCenter({ me, onEdit, onProfile, onCreate, onJoin, on
         <div className="overlay" onClick={() => setChoose(null)}>
           <div className="qcard stack pop-in" onClick={(e) => e.stopPropagation()}>
             <div className="row between">
-              <h2 style={{ fontSize: 30 }}>{{ bluff: '🤥 Lügen-Quiz', estimate: '📏 Schätz-Duell', imposter: '🕵️ Imposter' }[choose]}</h2>
+              <h2 style={{ fontSize: 30 }}>{{ songs: '🎧 Songs erraten', bluff: '🤥 Lügen-Quiz', estimate: '📏 Schätz-Duell', imposter: '🕵️ Imposter' }[choose]}</h2>
               <button className="icon-btn" onClick={() => setChoose(null)} aria-label="Schließen">✕</button>
             </div>
             <p className="muted" style={{ margin: 0, fontWeight: 700 }}>Wie wollt ihr spielen?</p>
             <button className="mode-card" style={{ width: '100%' }} onClick={() => { sfx.pick(); haptic('tap'); setChoose(null); onLocal(choose); }}>
               <div className="big">📱 Ein Handy</div>
-              <div style={{ fontWeight: 800 }}>Ihr sitzt zusammen und gebt ein Handy reihum weiter.</div>
+              <div style={{ fontWeight: 800 }}>{choose === 'songs' ? 'Ein Handy spielt die Songs ab, alle hören zu – du tippst an, wer zuerst richtig lag.' : 'Ihr sitzt zusammen und gebt ein Handy reihum weiter.'}</div>
             </button>
             <button className="mode-card" style={{ width: '100%' }} onClick={() => { sfx.pick(); haptic('tap'); setChoose(null); onCreate(choose); }}>
               <div className="big">🌐 Online</div>

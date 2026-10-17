@@ -3,7 +3,11 @@ import { useEffect, useRef, useState } from 'react';
 import Avatar from './Avatar';
 import EmojiPicker from './EmojiPicker';
 import { sfx, haptic } from '@/lib/sound';
-import { recordEmoji, topEmojis } from '@/lib/emojiUse';
+import { recordEmoji } from '@/lib/emojiUse';
+
+// Feste Reihenfolge (Jonas' Wunsch): die Leiste springt nicht um, man kann draufhämmern
+const QUICK = ['😂', '🔥', '💀', '😭', '👏'];
+const BAR = ['😂', '🔥', '💀', '😭', '👏', '😱'];
 
 // Chat unten LINKS (rechts liegen meist die Spiel-Knöpfe). Daneben die eigenen Lieblings-Emojis als
 // schnelle Reaktionen, ＋ öffnet alle Emojis.
@@ -14,18 +18,12 @@ export default function Chat({ room, me }) {
   const [text, setText] = useState('');
   const [seen, setSeen] = useState(0);
   const [picker, setPicker] = useState(null); // 'react' | 'text'
-  const [quick, setQuick] = useState(() => topEmojis(5));
   const listRef = useRef(null);
   const inputRef = useRef(null);
   const lastCount = useRef(messages.length);
   const [floating, setFloating] = useState([]);
   const seenReacts = useRef(new Set());
 
-  useEffect(() => {
-    const upd = () => setQuick(topEmojis(5));
-    window.addEventListener('gcity-emoji', upd);
-    return () => window.removeEventListener('gcity-emoji', upd);
-  }, []);
 
   useEffect(() => {
     if (messages.length > lastCount.current) {
@@ -77,7 +75,7 @@ export default function Chat({ room, me }) {
       )}
       {!open && !hidden && (
         <div className="quick-react">
-          {quick.map((e) => (
+          {QUICK.map((e) => (
             <button key={e} onClick={() => react(e)} aria-label={'Reaktion ' + e}>{e}</button>
           ))}
           <button className="qr-plus" onClick={() => { sfx.click(); setPicker('react'); }} aria-label="Alle Emojis">＋</button>
@@ -105,7 +103,7 @@ export default function Chat({ room, me }) {
             ))}
           </div>
           <div className="emoji-bar">
-            {topEmojis(6).map((e) => (
+            {BAR.map((e) => (
               <button key={e} onClick={() => { recordEmoji(e); setText((t) => t + e); haptic('tap'); }}>{e}</button>
             ))}
             <button className="qr-plus" onClick={() => setPicker('text')} aria-label="Alle Emojis">＋</button>

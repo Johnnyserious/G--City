@@ -6,11 +6,13 @@ import GameCenter from './GameCenter';
 import Room from './Room';
 import ImposterLocal from './ImposterLocal';
 import BluffLocal from './BluffLocal';
+import SongLocal from './SongLocal';
 import EstimateLocal from './EstimateLocal';
 import Shop from './Shop';
 import ProfileSetup from './ProfileSetup';
 import UpdateWatcher from './UpdateWatcher';
 import DialogHost from './DialogHost';
+import WhatsNew from './WhatsNew';
 import ProfilePage from './ProfilePage';
 import { haptic } from '@/lib/sound';
 import { loadProfile, storeProfile, fetchProfile, saveRemote, merge } from '@/lib/player';
@@ -39,6 +41,7 @@ export default function App() {
       <UpdateWatcher inRoom={inRoom} />
       <AppInner />
       <DialogHost />
+      <WhatsNew />
     </>
   );
 }
@@ -163,6 +166,9 @@ function AppInner() {
   }
   if (local === 'estimate') {
     return <EstimateLocal me={profile} onLeave={() => setLocal(null)} />;
+  }
+  if (local === 'songs') {
+    return <SongLocal me={profile} onLeave={() => setLocal(null)} />;
   }
   if (local === 'bluff') {
     return <BluffLocal me={profile} onLeave={() => setLocal(null)} />;

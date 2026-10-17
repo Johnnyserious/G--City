@@ -13,6 +13,7 @@ import ImposterRoom from './ImposterRoom';
 import MemeRoom from './MemeRoom';
 import DrawRoom from './DrawRoom';
 import BluffRoom from './BluffRoom';
+import SongRoom from './SongRoom';
 import EmojiRoom from './EmojiRoom';
 import EstimateRoom from './EstimateRoom';
 import { useResultReporter } from '@/lib/results';
@@ -133,6 +134,8 @@ export default function Room({ code, me, isCreator, game, onLeave, onEditProfile
     body = <EstimateRoom room={room} me={me} code={code} />;
   } else if (state.game === 'emoji') {
     body = <EmojiRoom room={room} me={me} code={code} />;
+  } else if (state.game === 'songs') {
+    body = <SongRoom room={room} me={me} code={code} />;
   } else if (state.game === 'bluff') {
     body = <BluffRoom room={room} me={me} code={code} />;
   } else if (state.game === 'draw') {

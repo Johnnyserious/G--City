@@ -7,7 +7,7 @@ import { passkeysSupported, passkeyLabel, registerPasskey } from '@/lib/passkeyC
 
 const GAME_NAMES = {
   quiz: ['🧠', 'Quiz-Board'], imposter: ['🕵️', 'Imposter'], meme: ['😂', 'Make it Meme'], draw: ['🎨', 'Zeichenspiel'],
-  bluff: ['🤥', 'Lügen-Quiz'], emoji: ['🦁', 'Emoji-Rätsel'], estimate: ['📏', 'Schätz-Duell'],
+  bluff: ['🤥', 'Lügen-Quiz'], emoji: ['🦁', 'Emoji-Rätsel'], estimate: ['📏', 'Schätz-Duell'], songs: ['🎧', 'Songs erraten'],
 };
 const fmt = (n) => Number(n || 0).toLocaleString('de-DE');
 
