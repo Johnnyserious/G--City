@@ -144,10 +144,25 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Beim Zurückkommen in den Tab meldet sich der Browser sofort neu an (`visibilitychange` in `lib/room.js`).
 - Test-Hinweis: Im Sandbox-Chromium stürzt die Seite manchmal ab, wenn Meme-Bilder nicht laden (Proxy blockt imgflip/memegen). In Playwright deshalb Bilder per `ctx.route` mit einem Testbild beantworten.
 
+## Feste Profile, G-Punkte, Startseite (Paket 1+2, Okt. 2026)
+
+- **Profil:** Beim ersten Öffnen Popup (`components/ProfileSetup.js`): neu anlegen oder per 6-stelligem Code wiederherstellen. Bestehende lokale Profile werden einmal „gesichert“ (Upgrade). Danach automatisch erkannt (localStorage `qa_profile`, Feld `registered: true`).
+- Server: Tabellen `profiles` + `profile_games` und Funktion `profile_add_result` (`supabase/profiles.sql`, **einmal im SQL Editor ausführen**), `lib/profiles.js`, API `GET/POST /api/profile` (save, restore, result). Client: `lib/player.js`.
+- **G-Punkte** statt Roh-Punkten (jedes Spiel hat andere Skalen): 10 fürs Mitspielen, Platz 1 +30, Platz 2 +15 (ab 3 Spielern), Platz 3 +5 (ab 4). Level-Kurve und Titel in `lib/player.js`.
+- Ergebnis-Erkennung `lib/results.js` (`finishedResult`): Quiz bei `end`, Meme/Zeichnen/Lügen/Emoji/Schätzen bei `final`, Imposter pro Runde (`result`). Jeder Browser meldet nur sich selbst, jedes Spiel zählt einmal (`key`). Ein-Handy-Spiele zählen (noch) nicht.
+- Profilseite `components/ProfilePage.js` (Level, Titel, Statistik, Vibration an/aus, Code anzeigen). Belohnung nach dem Spiel: `.reward-pop` in `Room.js`, im Spiel „+N“ (`.score-pop`).
+- **Dev-Mode ohne Shop-Login:** 5× schnell aufs Logo tippen → PIN. Server vergleicht mit `DEV_PIN` (Vercel), gibt einen Schlüssel (HMAC) zurück, das Handy merkt ihn sich (`gcity_dev_key`, Header `x-dev-key`). Lokal (Mock) ist die PIN `1234`. 🔒 im Dev-Mode sperrt das Handy wieder.
+- **Bots für alle:** `DevBots` (in jeder Lobby) für jeden Host, max. 16 Spieler. Bots spielen nach festen Regeln, kein KI-Aufruf.
+- **Startseite** (`GameCenter.js`): Kopf mit Logo/Shop/Ton/Avatar (→ Profil), Code-Feld, Spiele-Kacheln (2 Spalten am Handy), unten: Ideen (zugeklappt), „Fehler melden & Wünsche“ (`SupportSheet` → `POST /api/support` → GitHub-Issue `[Support] …` mit Label `dev-inbox`, max. 8 pro Stunde und IP), „Unsere Apps“ (Liste `APPS`, Eventradar = https://eventradar.club).
+- **Support-Meldungen in der Inbox** kommen von Spielern, nicht von Jonas: kleine Bugs direkt fixen, größere Änderungen erst mit Jonas abstimmen.
+- **Chat** unten links (`Chat.js`), daneben die 5 meistgenutzten Emojis (`lib/emojiUse.js`, nur auf dem Handy gespeichert), ＋ öffnet `EmojiPicker` (alle Emojis bis Version 15.1 aus `public/emoji.json`, deutsch durchsuchbar; erzeugt aus `emojibase-data`).
+- **Haptik:** `haptic()` in `lib/sound.js` (Android `navigator.vibrate`, iPhone über den Schalter-Trick ab iOS 18). Jeder Knopfdruck vibriert kurz (abschaltbar im Profil).
+- **Look:** dunkle Konturen (`--line`), Knöpfe mit Glanzkante und Plopp-Effekt. Hintergrund liegt auf `body::before` (kein `background-attachment: fixed`, das ließ iPhones beim Scrollen springen).
+
 ## Dev-Mode (nur Jonas) + Auftrags-Inbox
 
-- Sichtbar nur, wenn Jonas mit **jonas.goldenpost.media@gmail.com** im Shop eingeloggt ist (`lib/dev.js`, Server prüft zusätzlich; weitere Mails per `DEV_EMAILS` in Vercel). Knopf **🛠️** oben in der Spielezentrale → `components/DevPanel.js`.
-- **Bots:** In jeder Online-Lobby „🤖 Bot hinzufügen“ (nur Dev + Host). Bots sind Spieler mit `bot: true`, nicht in der Presence (`syncPlayers` überspringt sie). `lib/bots.js` → `botPlans(s)` sagt pro Spiel, was jeder Bot tun würde; der Host-Timer in `lib/room.js` führt jeden Plan einmal nach 1,5–10 s aus. Bots können nicht malen (geben als Zeichner auf). Zufalls-Entscheidungen pro Runde über `chance(key)` stabil halten.
+- Sichtbar, wenn per Logo-Geste + PIN freigeschaltet (siehe oben) oder wenn Jonas mit **jonas.goldenpost.media@gmail.com** im Shop eingeloggt ist (`lib/dev.js`, Server prüft zusätzlich; weitere Mails per `DEV_EMAILS` in Vercel). Knopf **🛠️** oben in der Spielezentrale → `components/DevPanel.js`.
+- **Bots:** In jeder Online-Lobby „＋ Bot“ (jeder Host, seit Paket 1+2). Bots sind Spieler mit `bot: true`, nicht in der Presence (`syncPlayers` überspringt sie). `lib/bots.js` → `botPlans(s)` sagt pro Spiel, was jeder Bot tun würde; der Host-Timer in `lib/room.js` führt jeden Plan einmal nach 1,5–10 s aus. Bots können nicht malen (geben als Zeichner auf). Zufalls-Entscheidungen pro Runde über `chance(key)` stabil halten.
 - **Inbox = GitHub-Issues mit Label `dev-inbox`** im Repo `Johnnyserious/G--City` (`lib/devServer.js`, API `/api/dev`, braucht `GITHUB_TOKEN` in Vercel: fine-grained, nur dieses Repo, Issues/Pull requests/Contents RW + Deployments R).
 - **Wenn Jonas im Chat „Inbox“ schreibt (nur auf Zuruf, kein Automatismus):**
   1. `gh api "repos/Johnnyserious/G--City/issues?labels=dev-inbox&state=open"` lesen (inkl. Kommentare – Antworten von Jonas beginnen mit „**Jonas (Dev-Mode):**“).
@@ -164,6 +179,15 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Vorgegebene Ideen in `lib/gameIdeas.js` (`key` nie ändern, daran hängen die Stimmen). Gebaute Spiele bekommen `done: true` (Anzeige „✅ jetzt spielbar“). Eigene Ideen haben den Schlüssel `u<id>`.
 - Speicher: Supabase-Tabellen `game_ideas` und `idea_votes` (`supabase/ideas.sql`, auch in `setup.sql`). Server: `lib/ideas.js`, API `GET/POST /api/ideas`. Wähler = Profil-ID aus localStorage.
 - Was die Gruppe will, sieht man dort an den Stimmen. Vor dem nächsten Spiel dort nachschauen.
+
+## Arbeitsweise mit Jonas (seine Vorgaben, Okt. 2026)
+
+- Immer nur **ein Spiel gleichzeitig**, vom leichtesten zum aufwendigsten; erst nach Abnahme das nächste.
+- Vor jedem Spiel vorstellen: Name + 2–3 Sätze (Ablauf, Spieler, Dauer, Sieg), 1–2 Referenzen (Jackbox, Heads Up, Kahoot …), kleine Skizze, dann Multiple Choice „So umsetzen / andere Spielweise / Später / Überspringen“.
+- Kleine Änderungen sofort umsetzen, größere als Multiple Choice vorstellen. Einwürfe nicht verlieren („Als Nächstes“-Liste).
+- Jede Antwort endet mit Statusbericht: ✅ Erledigt · 📍 Stand · 👉 Deine Action-Steps · 📝 Als Nächstes · ⏳ Einschätzung (Dauer/Kosten) · 🧭 Vorschlag.
+- Möglichst keine laufenden Kosten: feste Inhalte statt KI im Spiel. Ehrlich sagen, wenn etwas teuer oder rechtlich heikel ist.
+- Spielekatalog (Stufe 1–5) steht in seiner Anleitung: zuerst „Wer würde eher …?“ (freigegeben, kommt nach Paket 1+2), dann Ich hab noch nie, Entweder-oder, Wahrheit oder Pflicht, Tabu, Wer bin ich, Pantomime, Potsdam-Quiz, Promi, Songs (nur offizielle Vorschau-Clips), Buzzer, Reaktions-Duelle, Potsdam-Guesser, zum Schluss 3D-Runner Geltow → Potsdam.
 
 ## Geplant (Reihenfolge von Jonas)
 

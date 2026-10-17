@@ -23,7 +23,7 @@ const LABELS = {
   collarAndSweater: 'Pulli + Kragen', blazerAndShirt: 'Sakko', blazerAndSweater: 'Sakko + Pulli', overall: 'Latzhose',
 };
 
-export default function ProfileEditor({ initial, onSave, onCancel, joining }) {
+export default function ProfileEditor({ initial, onSave, onCancel, joining, title, subtitle, saveLabel, busy, footer }) {
   const [name, setName] = useState(initial?.name || '');
   const [avatar, setAvatar] = useState(initial?.avatar || randomAvatar());
   const [shake, setShake] = useState(false);
@@ -44,7 +44,7 @@ export default function ProfileEditor({ initial, onSave, onCancel, joining }) {
     }
     sfx.join();
     const id = initial?.id || (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2));
-    onSave({ id, name: n.slice(0, 16), avatar });
+    onSave({ ...(initial || {}), id, name: n.slice(0, 16), avatar });
   };
 
   return (
@@ -54,8 +54,8 @@ export default function ProfileEditor({ initial, onSave, onCancel, joining }) {
         {onCancel && <button className="icon-btn" onClick={onCancel} aria-label="Schließen">✕</button>}
       </div>
       <div className="card">
-        <h2 style={{ fontSize: 30, marginBottom: 4 }}>{initial ? 'Dein Look' : joining ? 'Bevor du reinkommst …' : 'Wer bist du heute?'}</h2>
-        <p className="muted" style={{ marginTop: 0 }}>Name und Figur kannst du jederzeit spontan ändern.</p>
+        <h2 style={{ fontSize: 30, marginBottom: 4 }}>{title || (initial ? 'Dein Look' : joining ? 'Bevor du reinkommst …' : 'Wer bist du?')}</h2>
+        <p className="muted" style={{ marginTop: 0 }}>{subtitle || 'Name und Figur kannst du jederzeit ändern – deine Punkte bleiben.'}</p>
         <div className="builder">
           <div className="preview">
             <Avatar avatar={avatar} size={200} />
@@ -97,9 +97,10 @@ export default function ProfileEditor({ initial, onSave, onCancel, joining }) {
             ))}
           </div>
         </div>
-        <button className="btn big full" style={{ marginTop: 22 }} onClick={save}>
-          {initial ? 'Speichern ✓' : "Los geht's 🚀"}
+        <button className="btn big full" style={{ marginTop: 22 }} onClick={save} disabled={busy}>
+          {busy ? '…' : saveLabel || (initial ? 'Speichern ✓' : "Los geht's 🚀")}
         </button>
+        {footer}
       </div>
     </div>
   );
