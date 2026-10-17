@@ -120,7 +120,7 @@ export default function ProfileSetup({ local, joining, onDone }) {
       <div className="wrap">
         <div className="card stack setup-card pop-in center welcome-card">
           <Avatar avatar={welcome.avatar} size={130} />
-          <h1 style={{ fontSize: 38 }}>Willkommen zurück,<br />{welcome.name}! 👋</h1>
+          <h1 style={{ fontSize: 38 }}>Na, da biste ja wieda,<br />{welcome.name}! 👋</h1>
           <p className="muted" style={{ fontWeight: 800, margin: 0 }}>{Number(welcome.points || 0).toLocaleString('de-DE')} G-Punkte · {welcome.wins || 0} Siege</p>
         </div>
       </div>

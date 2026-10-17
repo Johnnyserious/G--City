@@ -121,10 +121,10 @@ function MemeLobby({ room, me, code }) {
       </details>
       {isHost ? (
         <button className="btn big full pink" disabled={!enough} onClick={() => { sfx.fanfare(); send('start'); }}>
-          {enough ? 'Spiel starten 😂' : `Mindestens ${MIN_PLAYERS} Spieler nötig`}
+          {enough ? 'Los jeht\'s 😂' : `Mindestens ${MIN_PLAYERS} Spieler nötig`}
         </button>
       ) : (
-        <div className="card center" style={{ fontWeight: 800 }}>Warte, bis {s.players[s.hostId]?.name || 'der Host'} startet …</div>
+        <div className="card center" style={{ fontWeight: 800 }}>Warte ma, bis {s.players[s.hostId]?.name || 'der Host'} startet …</div>
       )}
     </div>
   );
@@ -395,7 +395,7 @@ function RoundEnd({ room, me }) {
     <div className="stack">
       {final ? (
         <div className="card center stack">
-          <h1 style={{ fontSize: 38 }}>{wins.length > 1 ? 'Gleichstand! 🏆' : 'Meme-König 👑'}</h1>
+          <h1 style={{ fontSize: 38 }}>{wins.length > 1 ? 'Unentschieden, wa? 🏆' : 'Meme-König 👑'}</h1>
           <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap', gap: 16 }}>
             {wins.map((p) => (
               <div key={p.id} className="player-chip" style={{ width: 96 }}>
@@ -405,7 +405,7 @@ function RoundEnd({ room, me }) {
               </div>
             ))}
           </div>
-          {wins.some((p) => p.id === me.id) && <div className="display" style={{ color: 'var(--green)', fontSize: 22 }}>Du hast gewonnen! 🎉</div>}
+          {wins.some((p) => p.id === me.id) && <div className="display" style={{ color: 'var(--green)', fontSize: 22 }}>Knorke, haste jewonnen! 🎉</div>}
         </div>
       ) : (
         <h2 className="center" style={{ fontSize: 30 }}>Runde {s.round} – Auflösung</h2>

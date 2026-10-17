@@ -10,6 +10,7 @@ import { sfx } from '@/lib/sound';
 import { onlineIds } from '@/lib/engine';
 import { STAGES, POINTS, MIN_PLAYERS, songFor, winners } from '@/lib/songs';
 import { stopSong } from '@/lib/songAudio';
+import { WRONG, CLOSE, pickB } from '@/lib/berlin';
 
 export default function SongRoom({ room, me, code }) {
   const { state: s } = room;
@@ -65,9 +66,9 @@ function Lobby({ room, me, code }) {
       <ShopToggle room={room} me={me} />
       <SongRules />
       {isHost ? (
-        <button className="btn big full pink" disabled={!enough} onClick={() => { sfx.fanfare(); send('start'); }}>Spiel starten 🎧</button>
+        <button className="btn big full pink" disabled={!enough} onClick={() => { sfx.fanfare(); send('start'); }}>Los jeht's 🎧</button>
       ) : (
-        <div className="card center" style={{ fontWeight: 800 }}>Warte, bis {s.players[s.hostId]?.name || 'der Host'} startet …</div>
+        <div className="card center" style={{ fontWeight: 800 }}>Warte ma, bis {s.players[s.hostId]?.name || 'der Host'} startet …</div>
       )}
     </div>
   );
@@ -89,9 +90,9 @@ function Play({ room, me }) {
     if (prog.tries.length > lastTries.current) {
       const t = prog.tries[prog.tries.length - 1];
       if (t.k === 'correct') { sfx.correct(); confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 }, zIndex: 100 }); setMsg(''); }
-      else if (t.k === 'close') { sfx.joker(); setMsg('🔥 Ganz nah dran – nochmal genauer!'); }
-      else if (t.k === 'artist') { sfx.joker(); setMsg('🎤 Der Interpret stimmt – aber welcher Song?'); }
-      else { sfx.wrong(); setMsg(`❌ „${t.t}“ ist es nicht`); }
+      else if (t.k === 'close') { sfx.joker(); setMsg(`🔥 ${pickB(CLOSE)} Nomma jenauer!`); }
+      else if (t.k === 'artist') { sfx.joker(); setMsg('🎤 Der Interpret stimmt – aba welcher Song, wa?'); }
+      else { sfx.wrong(); setMsg(`❌ „${t.t}“ – ${pickB(WRONG)}`); }
     }
     lastTries.current = prog.tries.length;
   }, [prog?.tries.length]); // eslint-disable-line
@@ -133,14 +134,14 @@ function Play({ room, me }) {
         {prog.done ? (
           prog.solved ? (
             <div className="stack">
-              <div className="display" style={{ fontSize: 28, color: 'var(--green)' }}>Richtig! +{prog.pts}</div>
+              <div className="display" style={{ fontSize: 28, color: 'var(--green)' }}>Knorke! +{prog.pts}</div>
               <div style={{ fontWeight: 900, fontSize: 20 }}>{song.title}</div>
               <div className="muted" style={{ fontWeight: 800 }}>{song.artist}</div>
               <div className="muted" style={{ fontWeight: 700 }}>Warte auf die anderen …</div>
             </div>
           ) : (
             <div className="stack">
-              <div className="display" style={{ fontSize: 26, color: 'var(--red)' }}>Leider nicht 😬</div>
+              <div className="display" style={{ fontSize: 26, color: 'var(--red)' }}>Nee, dit war nüscht 😬</div>
               <div className="muted" style={{ fontWeight: 700 }}>Auflösung gleich – warte auf die anderen …</div>
             </div>
           )
@@ -240,7 +241,7 @@ function Final({ room, me }) {
   return (
     <div className="stack">
       <div className="card center stack">
-        <h1 style={{ fontSize: 38 }}>{wins.length > 1 ? 'Gleichstand! 🏆' : 'Musik-Profi 🎧👑'}</h1>
+        <h1 style={{ fontSize: 38 }}>{wins.length > 1 ? 'Unentschieden, wa? 🏆' : 'Musik-Profi 🎧👑'}</h1>
         <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap', gap: 16 }}>
           {wins.map((p) => (
             <div key={p.id} className="player-chip" style={{ width: 96 }}>
@@ -250,12 +251,12 @@ function Final({ room, me }) {
             </div>
           ))}
         </div>
-        {wins.some((p) => p.id === me.id) && <div className="display" style={{ color: 'var(--green)', fontSize: 22 }}>Du hast gewonnen! 🎉</div>}
+        {wins.some((p) => p.id === me.id) && <div className="display" style={{ color: 'var(--green)', fontSize: 22 }}>Knorke, haste jewonnen! 🎉</div>}
       </div>
       <div className="card"><h3 style={{ fontSize: 22, marginBottom: 4 }}>Endstand</h3><ScoreList players={players} /></div>
       {isHost ? (
         <div className="stack">
-          <button className="btn big full pink" disabled={onlineIds(s).length < MIN_PLAYERS} onClick={() => { sfx.fanfare(); send('start'); }}>Nochmal 🎧</button>
+          <button className="btn big full pink" disabled={onlineIds(s).length < MIN_PLAYERS} onClick={() => { sfx.fanfare(); send('start'); }}>Nomma! 🎧</button>
           <div className="row" style={{ justifyContent: 'center' }}>
             <button className="btn small ghost" onClick={() => setShowSettings(!showSettings)}>⚙️ Einstellungen</button>
             <button className="btn small ghost" onClick={() => send('lobby')}>Lobby</button>
@@ -263,7 +264,7 @@ function Final({ room, me }) {
           {showSettings && <div className="card"><SongSettings settings={s.settings} onChange={(x) => send('settings', x)} /></div>}
         </div>
       ) : (
-        <div className="center muted" style={{ fontWeight: 800 }}>Der Host kann nochmal starten.</div>
+        <div className="center muted" style={{ fontWeight: 800 }}>Der Host kann nomma starten.</div>
       )}
     </div>
   );

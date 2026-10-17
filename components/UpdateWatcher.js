@@ -33,7 +33,7 @@ export default function UpdateWatcher({ inRoom }) {
   if (!ready) return null;
   return (
     <button className="update-bar" onClick={() => window.location.reload()}>
-      ✨ Neue Version ist da – <b>Aktualisieren</b> (du bleibst im Raum)
+      ✨ Neue Version is da – <b>Aktualisieren</b> (du bleibst im Raum)
     </button>
   );
 }

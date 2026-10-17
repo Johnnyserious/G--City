@@ -73,10 +73,10 @@ function EstLobby({ room, me, code }) {
       <EstRules />
       {isHost ? (
         <button className="btn big full pink" disabled={!enough} onClick={() => { sfx.fanfare(); send('start'); }}>
-          {enough ? 'Spiel starten 📏' : `Mindestens ${MIN_PLAYERS} Spieler nötig`}
+          {enough ? 'Los jeht\'s 📏' : `Mindestens ${MIN_PLAYERS} Spieler nötig`}
         </button>
       ) : (
-        <div className="card center" style={{ fontWeight: 800 }}>Warte, bis {s.players[s.hostId]?.name || 'der Host'} startet …</div>
+        <div className="card center" style={{ fontWeight: 800 }}>Warte ma, bis {s.players[s.hostId]?.name || 'der Host'} startet …</div>
       )}
     </div>
   );
@@ -180,7 +180,7 @@ function Final({ room, me }) {
   return (
     <div className="stack">
       <div className="card center stack">
-        <h1 style={{ fontSize: 38 }}>{wins.length > 1 ? 'Gleichstand! 🏆' : 'Schätz-König 📏👑'}</h1>
+        <h1 style={{ fontSize: 38 }}>{wins.length > 1 ? 'Unentschieden, wa? 🏆' : 'Schätz-König 📏👑'}</h1>
         <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap', gap: 16 }}>
           {wins.map((p) => (
             <div key={p.id} className="player-chip" style={{ width: 96 }}>
@@ -190,12 +190,12 @@ function Final({ room, me }) {
             </div>
           ))}
         </div>
-        {wins.some((p) => p.id === me.id) && <div className="display" style={{ color: 'var(--green)', fontSize: 22 }}>Du hast gewonnen! 🎉</div>}
+        {wins.some((p) => p.id === me.id) && <div className="display" style={{ color: 'var(--green)', fontSize: 22 }}>Knorke, haste jewonnen! 🎉</div>}
       </div>
       <div className="card"><h3 style={{ fontSize: 22, marginBottom: 4 }}>Endstand</h3><ScoreList players={players} /></div>
       {isHost ? (
         <div className="stack">
-          <button className="btn big full pink" disabled={onlineIds(s).length < MIN_PLAYERS} onClick={() => { sfx.fanfare(); send('start'); }}>Nochmal 📏</button>
+          <button className="btn big full pink" disabled={onlineIds(s).length < MIN_PLAYERS} onClick={() => { sfx.fanfare(); send('start'); }}>Nomma! 📏</button>
           <div className="row" style={{ justifyContent: 'center' }}>
             <button className="btn small ghost" onClick={() => setShowSettings(!showSettings)}>⚙️ Einstellungen</button>
             <button className="btn small ghost" onClick={() => send('lobby')}>Lobby</button>
@@ -203,7 +203,7 @@ function Final({ room, me }) {
           {showSettings && <div className="card"><EstSettings settings={s.settings} onChange={(x) => send('settings', x)} /></div>}
         </div>
       ) : (
-        <div className="center muted" style={{ fontWeight: 800 }}>Der Host kann nochmal starten.</div>
+        <div className="center muted" style={{ fontWeight: 800 }}>Der Host kann nomma starten.</div>
       )}
     </div>
   );

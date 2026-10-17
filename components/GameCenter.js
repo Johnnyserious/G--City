@@ -10,7 +10,8 @@ import { levelInfo } from '@/lib/player';
 
 // Spiele in der Spielezentrale. mode: 'choose' = Ein Handy oder Online, sonst direkt online.
 const GAMES = [
-  { key: 'songs', cls: 'g-songs', emoji: '🎧', name: 'Songs erraten', tag: 'Ab 0,2 Sekunden – kennst du ihn?', choose: true, isNew: true },
+  { key: 'slf', cls: 'g-slf', emoji: '🏙️', name: 'Stadt, Land, Fluss', tag: '+ Insider – dreh dit Rad!', isNew: true },
+  { key: 'songs', cls: 'g-songs', emoji: '🎧', name: 'Songs erraten', tag: 'Ab 0,2 Sekunden – kennste den?', choose: true, isNew: true },
   { key: 'quiz', cls: 'g-quiz', emoji: '🧠', name: 'Quiz-Board', tag: '5 Themen, Joker & Veto' },
   { key: 'imposter', cls: 'g-imp', emoji: '🕵️', name: 'Imposter', tag: 'Einer kennt das Wort nicht', choose: true },
   { key: 'meme', cls: 'g-meme', emoji: '😂', name: 'Make it Meme', tag: 'Betexten, bewerten, raten' },
@@ -41,7 +42,7 @@ export default function GameCenter({ me, onEdit, onProfile, onCreate, onJoin, on
       if (sessionStorage.getItem('gc_welcomed')) return '';
       sessionStorage.setItem('gc_welcomed', '1');
       const old = me.createdAt && Date.now() - new Date(me.createdAt).getTime() > 10 * 60000;
-      return me.registered && old ? `Willkommen zurück, ${me.name}! 👋` : '';
+      return me.registered && old ? `Na, ooch wieda da, ${me.name}? 👋` : '';
     } catch { return ''; }
   });
   useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(''), 2600); return () => clearTimeout(t); }, [toast]);
@@ -104,7 +105,7 @@ export default function GameCenter({ me, onEdit, onProfile, onCreate, onJoin, on
       </div>
 
       <div className="card join-card">
-        <div className="join-title">Raum beitreten</div>
+        <div className="join-title">Komm rin! 🚪</div>
         <div className="row">
           <input
             className="input code-input"
@@ -117,11 +118,11 @@ export default function GameCenter({ me, onEdit, onProfile, onCreate, onJoin, on
             onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z]/g, ''))}
             onKeyDown={(e) => e.key === 'Enter' && join()}
           />
-          <button className="btn teal join-btn" disabled={code.length !== 4} onClick={join}>Rein ➜</button>
+          <button className="btn teal join-btn" disabled={code.length !== 4} onClick={join}>Rin da! ➜</button>
         </div>
       </div>
 
-      <h2 className="section-title">Spiele</h2>
+      <h2 className="section-title">Wat wollta zocken?</h2>
       <div className="games">
         {GAMES.map((g) => (
           <button key={g.key} className={'game-card ' + g.cls} onClick={() => start(g)}>
@@ -140,7 +141,7 @@ export default function GameCenter({ me, onEdit, onProfile, onCreate, onJoin, on
               <h2 style={{ fontSize: 30 }}>{{ songs: '🎧 Songs erraten', bluff: '🤥 Lügen-Quiz', estimate: '📏 Schätz-Duell', imposter: '🕵️ Imposter' }[choose]}</h2>
               <button className="icon-btn" onClick={() => setChoose(null)} aria-label="Schließen">✕</button>
             </div>
-            <p className="muted" style={{ margin: 0, fontWeight: 700 }}>Wie wollt ihr spielen?</p>
+            <p className="muted" style={{ margin: 0, fontWeight: 700 }}>Wie wollta spielen?</p>
             <button className="mode-card" style={{ width: '100%' }} onClick={() => { sfx.pick(); haptic('tap'); setChoose(null); onLocal(choose); }}>
               <div className="big">📱 Ein Handy</div>
               <div style={{ fontWeight: 800 }}>{choose === 'songs' ? 'Ein Handy spielt die Songs ab, alle hören zu – du tippst an, wer zuerst richtig lag.' : 'Ihr sitzt zusammen und gebt ein Handy reihum weiter.'}</div>
@@ -156,14 +157,14 @@ export default function GameCenter({ me, onEdit, onProfile, onCreate, onJoin, on
       <div className="more-list">
         <button className="more-row" onClick={() => { sfx.click(); haptic('tap'); setIdeasOpen(!ideasOpen); }} aria-expanded={ideasOpen}>
           <span className="more-ico">💡</span>
-          <span className="more-txt"><b>Was kommt als Nächstes?</b><span>Ideen voten oder selbst vorschlagen</span></span>
+          <span className="more-txt"><b>Wat kommt als Nächstet?</b><span>Ideen voten oder selbst vorschlagen</span></span>
           <span className={'more-arrow' + (ideasOpen ? ' open' : '')}>›</span>
         </button>
         {ideasOpen && <div className="more-body"><IdeaBoard me={me} embedded /></div>}
 
         <button className="more-row" onClick={() => { sfx.click(); haptic('tap'); setSupport(true); }}>
           <span className="more-ico">🛠️</span>
-          <span className="more-txt"><b>Fehler melden & Wünsche</b><span>Bug, Idee oder Verbesserung – geht direkt an die Entwicklung</span></span>
+          <span className="more-txt"><b>Wat kaputt? Wünsche?</b><span>Bug, Idee oder Verbesserung – geht direkt an die Entwicklung</span></span>
           <span className="more-arrow">›</span>
         </button>
 
@@ -181,7 +182,7 @@ export default function GameCenter({ me, onEdit, onProfile, onCreate, onJoin, on
         <div className="legal-links"><a href="/admin">Fragen-Datenbank</a> · <a href="/impressum">Impressum</a> · <a href="/agb">AGB</a> · <a href="/widerruf">Widerruf</a> · <a href="/datenschutz">Datenschutz</a></div>
       </div>
 
-      {support && <SupportSheet me={me} onClose={(sent) => { setSupport(false); if (sent) { setToast('Danke! Ist angekommen 📬'); setTimeout(() => setToast(''), 2500); } }} />}
+      {support && <SupportSheet me={me} onClose={(sent) => { setSupport(false); if (sent) { setToast('Danke dir! Is anjekommen 📬'); setTimeout(() => setToast(''), 2500); } }} />}
 
       {pinAsk && (
         <div className="overlay" onClick={() => setPinAsk(false)}>

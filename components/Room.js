@@ -14,9 +14,12 @@ import MemeRoom from './MemeRoom';
 import DrawRoom from './DrawRoom';
 import BluffRoom from './BluffRoom';
 import SongRoom from './SongRoom';
+import SlfRoom from './SlfRoom';
 import EmojiRoom from './EmojiRoom';
 import EstimateRoom from './EstimateRoom';
 import { useResultReporter } from '@/lib/results';
+import BerlinPop from './BerlinPop';
+import { WIN, LOSE, pickB } from '@/lib/berlin';
 import { levelInfo, reportResult } from '@/lib/player';
 import { ask, choose } from '@/lib/dialog';
 import { haptic } from '@/lib/sound';
@@ -45,7 +48,7 @@ export default function Room({ code, me, isCreator, game, onLeave, onEditProfile
   }, [room.state, me.id]);
 
   // Spiel vorbei → Ergebnis ins Profil, dazu „+40 G-Punkte“ einblenden
-  useResultReporter(room.state, me, code, (p, pts) => {
+  useResultReporter(room.state, me, code, (p, pts, r) => {
     const before = levelInfo(me.points || 0).level;
     const after = levelInfo(p.points || 0).level;
     onProfileUpdate && onProfileUpdate(p);
@@ -53,7 +56,7 @@ export default function Room({ code, me, isCreator, game, onLeave, onEditProfile
       sfx.coin();
       haptic(after > before ? 'big' : 'success');
       if (after > before) setTimeout(() => sfx.levelUp(), 350);
-      setReward({ pts, level: after > before ? after : null, id: Date.now() });
+      setReward({ pts, level: after > before ? after : null, id: Date.now(), say: pickB(r?.rank === 1 ? WIN : LOSE) });
       setTimeout(() => setReward(null), 3200);
     }, 1400);
   });
@@ -134,6 +137,8 @@ export default function Room({ code, me, isCreator, game, onLeave, onEditProfile
     body = <EstimateRoom room={room} me={me} code={code} />;
   } else if (state.game === 'emoji') {
     body = <EmojiRoom room={room} me={me} code={code} />;
+  } else if (state.game === 'slf') {
+    body = <SlfRoom room={room} me={me} code={code} />;
   } else if (state.game === 'songs') {
     body = <SongRoom room={room} me={me} code={code} />;
   } else if (state.game === 'bluff') {
@@ -159,15 +164,21 @@ export default function Room({ code, me, isCreator, game, onLeave, onEditProfile
   }
 
   const isHost = state?.hostId === me.id;
+  // Neue Frage/Runde → manchmal ein Berliner Spruch oben
+  const popKey = state && !['lobby', 'final', 'end', 'loading'].includes(state.phase)
+    ? [state.game, state.round, state.idx, state.qIdx, state.turnId, state.current?.cat, state.current?.row, state.phase === 'write' || state.phase === 'play' || state.phase === 'question' ? 'q' : ''].join(':')
+    : '';
 
   return (
     <div className="wrap">
       {toast && <div className="toast">{toast}</div>}
+      <BerlinPop trigger={popKey} />
       {gain && <div key={gain.id} className="score-pop">+{gain.n}</div>}
       {reward && (
         <div key={reward.id} className="reward-pop">
           <div className="reward-pts">+{reward.pts}</div>
           <div className="reward-label">G-Punkte</div>
+          {reward.say && <div className="reward-say">{reward.say}</div>}
           {reward.level && <div className="reward-level">Level {reward.level}! 🎉</div>}
         </div>
       )}

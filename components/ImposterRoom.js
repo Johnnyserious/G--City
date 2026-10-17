@@ -110,10 +110,10 @@ function ImpLobby({ room, me, code }) {
       <RulesBox />
       {isHost ? (
         <button className="btn big full pink" disabled={!enough} onClick={() => { sfx.fanfare(); send('start'); }}>
-          {enough ? 'Spiel starten 🕵️' : `Mindestens ${MIN_PLAYERS} Spieler nötig`}
+          {enough ? 'Los jeht\'s 🕵️' : `Mindestens ${MIN_PLAYERS} Spieler nötig`}
         </button>
       ) : (
-        <div className="card center" style={{ fontWeight: 800 }}>Warte, bis {host?.name || 'der Host'} startet …</div>
+        <div className="card center" style={{ fontWeight: 800 }}>Warte ma, bis {host?.name || 'der Host'} startet …</div>
       )}
     </div>
   );

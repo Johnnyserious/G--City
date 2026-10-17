@@ -217,7 +217,7 @@ function Setup({ players, setPlayers, settings, setSettings, onStart, err }) {
       <div className="card"><SongSettings settings={settings} online={false} onChange={(x) => setSettings((s) => ({ ...s, ...x }))} /></div>
       {err && <div className="err-box">{err}</div>}
       <SongRules online={false} />
-      <button className="btn big full pink" disabled={!ok} onClick={onStart}>{ok ? 'Spiel starten 🎧' : 'Mindestens 2 Spieler'}</button>
+      <button className="btn big full pink" disabled={!ok} onClick={onStart}>{ok ? 'Los jeht\'s 🎧' : 'Mindestens 2 Spieler'}</button>
     </div>
   );
 }
@@ -231,7 +231,7 @@ function Final({ players, onAgain, onSetup }) {
   return (
     <div className="stack">
       <div className="card center stack">
-        <h1 style={{ fontSize: 38 }}>{wins.length > 1 ? 'Gleichstand! 🏆' : 'Musik-Profi 🎧👑'}</h1>
+        <h1 style={{ fontSize: 38 }}>{wins.length > 1 ? 'Unentschieden, wa? 🏆' : 'Musik-Profi 🎧👑'}</h1>
         <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap', gap: 16 }}>
           {wins.map((p) => (
             <div key={p.id} className="player-chip" style={{ width: 96 }}>
@@ -243,7 +243,7 @@ function Final({ players, onAgain, onSetup }) {
         </div>
       </div>
       <div className="card"><h3 style={{ fontSize: 22, marginBottom: 4 }}>Auswertung</h3><ScoreList players={players} /></div>
-      <button className="btn big full pink" onClick={onAgain}>Nochmal 🎧</button>
+      <button className="btn big full pink" onClick={onAgain}>Nomma! 🎧</button>
       <button className="btn ghost full" onClick={onSetup}>Spieler ändern</button>
     </div>
   );

@@ -73,10 +73,10 @@ export default function Lobby({ room, me, code }) {
       <DevBots room={room} me={me} />
       <ShopToggle room={room} me={me} />
       {isHost ? (
-        <button className="btn big full pink" onClick={() => { sfx.fanfare(); send('start'); }}>Spiel starten 🚀</button>
+        <button className="btn big full pink" onClick={() => { sfx.fanfare(); send('start'); }}>Los jeht's 🚀</button>
       ) : (
         <div className="card center" style={{ fontWeight: 800 }}>
-          Warte, bis <Avatar avatar={host?.avatar} size={28} style={{ display: 'inline-block', verticalAlign: 'middle' }} /> {host?.name || 'der Host'} startet …
+          Warte ma, bis <Avatar avatar={host?.avatar} size={28} style={{ display: 'inline-block', verticalAlign: 'middle' }} /> {host?.name || 'der Host'} startet …
         </div>
       )}
     </div>

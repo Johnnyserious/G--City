@@ -136,6 +136,18 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - Songs: `lib/songList.js` ([Interpret, Titel, [weitere Antworten]] je Kategorie; einfach erweitern). Server `lib/songServer.js` sucht beim Start die kostenlose 30-s-Hörprobe bei **Deezer** (Ersatz iTunes, beide ohne Schlüssel) und überspringt Songs ohne eindeutigen Treffer. `POST /api/songs`, Audio läuft über `GET /api/songs/audio?u=…` (nur dzcdn.net/apple.com erlaubt), damit der Browser es per Web Audio schneiden darf. Mock: `MOCK_AI=1` liefert Pieptöne.
 - Browser: `lib/songAudio.js` lädt + dekodiert, sucht die erste laute Stelle (≈ Hook/Refrain, mind. 15 s Rest) und spielt Ausschnitte ab. Abspielen nur im Tipp (iPhone). Regeln `lib/songs.js`, Oberfläche `components/SongRoom.js`.
 
+## Stadt, Land, Fluss, Insider (fertig, Okt. 2026)
+
+- Nur online (`game: 'slf'`), ab 2 Spielern. Host: 3/5/8 Runden, 30/45/60 s, Buchstaben abwählen (Standard ohne C, Q, X, Y; jeder Buchstabe nur einmal pro Spiel) und **eine eigene Extra-Kategorie** (`s.custom`, wird nach dem Spiel wieder geleert).
+- Ablauf: Reihum dreht einer das Glücksrad (SVG, alle sehen es; dreht keiner, nach 12 s automatisch) → alle tippen gleichzeitig, Reihenfolge egal → **STOPP ✋** sobald alles ausgefüllt, dann 5 s Rest → Abstimmung 👍/👎 (alles ist erst 👍, ungültig bei Mehrheit 👎 der anderen) → Auswertung → nächste Runde. Am Ende „Noch 'ne Runde!“ (Punkte laufen weiter).
+- Punkte: 15 nur ich, 10 mehrere gleich, 0 ungültig/falscher Buchstabe/leer. Städte, Länder, Flüsse prüft `lib/slfWords.js` automatisch (Liste einfach erweitern); Unbekanntes, Insider und Extra-Kategorie gehen in die Abstimmung.
+- Regeln `lib/slf.js`, Oberfläche `components/SlfRoom.js`. Eingaben werden alle 350 ms (`type`) und beim STOPP/kurz vor Ende komplett (`all`) geschickt.
+
+## Berlinerisch (Jonas' Wunsch, Okt. 2026)
+
+- Die ganze App berlinert („Komm rin!“, „Rin da!“, „Los jeht's“, „Knorke, haste jewonnen!“). Regeln/Rechtliches bleiben verständlich.
+- Sprüche in `lib/berlin.js` (POPS, WIN, LOSE, WRONG, CLOSE) – einfach ergänzen. `components/BerlinPop.js`: bei neuer Frage/Runde manchmal (35 %) kleiner Spruch oben, blockiert nichts, keine Vibration. Nach jedem Spiel steht ein Spruch unter den G-Punkten.
+
 ## „Das ist neu“ nach Updates
 
 - `lib/changelog.js`: neuen Eintrag **oben** mit neuer `id` anlegen, ein Punkt pro Bildschirm. `components/WhatsNew.js` zeigt ihn einmal pro Handy (localStorage `gcity_seen_changelog`), ganz neue Nutzer bekommen ihn nicht. Bei jedem größeren Update pflegen!

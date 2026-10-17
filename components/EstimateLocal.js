@@ -182,7 +182,7 @@ function Setup({ players, setPlayers, settings, setSettings, onStart }) {
       </div>
       <div className="card"><EstSettings settings={settings} showTime={false} onChange={(x) => setSettings((s) => ({ ...s, ...x }))} /></div>
       <EstRules />
-      <button className="btn big full pink" disabled={!ok} onClick={onStart}>{ok ? 'Spiel starten 📏' : `Mindestens ${MIN_PLAYERS} Spieler`}</button>
+      <button className="btn big full pink" disabled={!ok} onClick={onStart}>{ok ? 'Los jeht\'s 📏' : `Mindestens ${MIN_PLAYERS} Spieler`}</button>
     </div>
   );
 }
@@ -196,7 +196,7 @@ function Final({ players, onAgain, onSetup }) {
   return (
     <div className="stack">
       <div className="card center stack">
-        <h1 style={{ fontSize: 38 }}>{wins.length > 1 ? 'Gleichstand! 🏆' : 'Schätz-König 📏👑'}</h1>
+        <h1 style={{ fontSize: 38 }}>{wins.length > 1 ? 'Unentschieden, wa? 🏆' : 'Schätz-König 📏👑'}</h1>
         <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap', gap: 16 }}>
           {wins.map((p) => (
             <div key={p.id} className="player-chip" style={{ width: 96 }}>
@@ -208,7 +208,7 @@ function Final({ players, onAgain, onSetup }) {
         </div>
       </div>
       <div className="card"><h3 style={{ fontSize: 22, marginBottom: 4 }}>Endstand</h3><ScoreList players={players} /></div>
-      <button className="btn big full pink" onClick={onAgain}>Nochmal 📏</button>
+      <button className="btn big full pink" onClick={onAgain}>Nomma! 📏</button>
       <div className="center"><button className="btn small ghost" onClick={onSetup}>Spieler / Einstellungen ändern</button></div>
     </div>
   );

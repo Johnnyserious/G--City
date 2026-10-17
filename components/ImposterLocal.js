@@ -178,7 +178,7 @@ function Setup({ players, setPlayers, settings, setSettings, onStart }) {
         <ImposterSettings settings={settings} playerCount={players.length} onChange={(x) => setSettings((s) => ({ ...s, ...x }))} />
       </div>
       <RulesBox />
-      <button className="btn big full pink" disabled={!ok} onClick={onStart}>{ok ? 'Spiel starten 🕵️' : `Mindestens ${MIN_PLAYERS} Spieler`}</button>
+      <button className="btn big full pink" disabled={!ok} onClick={onStart}>{ok ? 'Los jeht\'s 🕵️' : `Mindestens ${MIN_PLAYERS} Spieler`}</button>
     </div>
   );
 }
