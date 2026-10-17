@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
+import { ask } from '@/lib/dialog';
 import Avatar from './Avatar';
 import { useAccount } from '@/lib/account';
 import { isDevEmail, REQUEST_TYPES } from '@/lib/dev';
@@ -141,7 +142,7 @@ export default function DevPanel({ onClose, onCreate }) {
         <div className="logo">G <span>Dev</span></div>
         <div className="row" style={{ gap: 8 }}>
           <button className="icon-btn" onClick={load} aria-label="Neu laden">🔄</button>
-          {getDevKey() && <button className="icon-btn" title="Dev-Mode auf diesem Handy sperren" onClick={() => { if (confirm('Dev-Mode auf diesem Handy wieder sperren?')) { setDevKey(''); onClose(); } }}>🔒</button>}
+          {getDevKey() && <button className="icon-btn" title="Dev-Mode auf diesem Handy sperren" onClick={async () => { if (await ask({ title: 'Dev-Mode sperren?', text: 'Auf diesem Handy wieder sperren. Mit der PIN kommst du jederzeit zurück.', ok: 'Sperren', cancel: 'Abbrechen' })) { setDevKey(''); onClose(); } }}>🔒</button>}
         </div>
       </div>
 
@@ -194,7 +195,7 @@ export default function DevPanel({ onClose, onCreate }) {
                   ) : (
                     <span className="muted" style={{ fontWeight: 800 }}>⏳ Vorschau wird gebaut …</span>
                   )}
-                  <button className="btn small green" disabled={busy === 'live' + it.number} onClick={() => confirm('Diese Änderung für alle live schalten?') && run('live' + it.number, { action: 'live', number: it.number }, 'Wird veröffentlicht – in ca. 1 Minute live 🚀')}>🚀 Live schalten</button>
+                  <button className="btn small green" disabled={busy === 'live' + it.number} onClick={async () => (await ask({ title: 'Live schalten?', text: 'Diese Änderung geht für alle online.', ok: '🚀 Live schalten', cancel: 'Abbrechen' })) && run('live' + it.number, { action: 'live', number: it.number }, 'Wird veröffentlicht – in ca. 1 Minute live 🚀')}>🚀 Live schalten</button>
                 </div>
               )}
               {['wartet', 'rückfrage', 'vorschau'].includes(it.status) && (
@@ -203,7 +204,7 @@ export default function DevPanel({ onClose, onCreate }) {
                     <input className="input" style={{ fontSize: 15, padding: '10px 12px' }} placeholder={it.status === 'rückfrage' ? 'Antwort an Claude …' : 'Nachtrag / Änderungswunsch …'} value={answer[it.number] || ''} onChange={(e) => setAnswer({ ...answer, [it.number]: e.target.value })} />
                     <button className="btn small" disabled={!answer[it.number]?.trim()} onClick={async () => { if (await run('r' + it.number, { action: 'reply', number: it.number, text: answer[it.number] }, 'Gesendet')) setAnswer({ ...answer, [it.number]: '' }); }}>➜</button>
                   </div>
-                  <div><button className="btn small ghost" onClick={() => confirm('Auftrag verwerfen?') && run('d' + it.number, { action: 'discard', number: it.number }, 'Verworfen')}>Verwerfen</button></div>
+                  <div><button className="btn small ghost" onClick={async () => (await ask({ title: 'Auftrag verwerfen?', ok: 'Verwerfen', cancel: 'Behalten', danger: true })) && run('d' + it.number, { action: 'discard', number: it.number }, 'Verworfen')}>Verwerfen</button></div>
                 </div>
               )}
             </div>

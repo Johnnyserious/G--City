@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { ask } from '@/lib/dialog';
 import { DevBots } from './DevPanel';
 import { revealFor } from '@/lib/shopGame';
 import JokerBag, { ShopToggle } from './JokerBag';
@@ -246,7 +247,7 @@ function Turn({ room, me }) {
         {!isDrawer && s.phase === 'draw' && <div style={{ marginTop: 8 }}><JokerBag room={room} me={me} items={['draw_letters']} /></div>}
         {(isDrawer || isHost) && s.phase === 'draw' && (
           <div className="center" style={{ marginTop: 8 }}>
-            <button className="btn small ghost" onClick={() => confirm(isDrawer ? 'Zug aufgeben?' : 'Diesen Zug überspringen?') && send('skip')}>{isDrawer ? 'Aufgeben' : 'Zug überspringen'}</button>
+            <button className="btn small ghost" onClick={() => ask({ title: isDrawer ? 'Zug aufgeben?' : 'Zug überspringen?', ok: isDrawer ? 'Aufgeben' : 'Überspringen', cancel: 'Weiter malen' }).then((ok) => ok && send('skip'))}>{isDrawer ? 'Aufgeben' : 'Zug überspringen'}</button>
           </div>
         )}
       </div>

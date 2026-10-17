@@ -16,7 +16,8 @@ import BluffRoom from './BluffRoom';
 import EmojiRoom from './EmojiRoom';
 import EstimateRoom from './EstimateRoom';
 import { useResultReporter } from '@/lib/results';
-import { levelInfo } from '@/lib/player';
+import { levelInfo, reportResult } from '@/lib/player';
+import { ask, choose } from '@/lib/dialog';
 import { haptic } from '@/lib/sound';
 
 export default function Room({ code, me, isCreator, game, onLeave, onEditProfile, onProfileUpdate }) {
@@ -71,8 +72,30 @@ export default function Room({ code, me, isCreator, game, onLeave, onEditProfile
     prevPlayers.current = ids;
   }, [state, me.id]);
 
-  const leave = () => {
-    if (confirm('Raum wirklich verlassen?')) onLeave();
+  // Verlassen: in der Lobby sofort. Im laufenden Spiel kurz fragen – die anderen spielen weiter,
+  // fürs Mitspielen gibt es trotzdem G-Punkte. Der Host kann stattdessen alle in die Lobby holen.
+  const leave = async () => {
+    const s = room.state;
+    if (!s || s.phase === 'lobby') { onLeave(); return; }
+    const host = s.hostId === me.id;
+    const others = Object.values(s.players).filter((p) => p.id !== me.id && p.online && !p.bot).length;
+    const v = await choose({
+      title: 'Spiel verlassen?',
+      text: others ? 'Die anderen können ohne dich weiterspielen.' : 'Außer dir ist kein echter Spieler mehr da.',
+      options: [
+        { label: 'Verlassen 👋', sub: 'Deine G-Punkte fürs Mitspielen bekommst du trotzdem', value: 'leave', cls: 'pink' },
+        ...(host ? [{ label: 'Alle zurück in die Lobby', sub: 'Punkte bleiben stehen', value: 'lobby', cls: 'ghost' }] : []),
+        { label: 'Weiterspielen', value: null, cls: 'ghost' },
+      ],
+    });
+    if (v === 'lobby') { room.send('lobby'); return; }
+    if (v !== 'leave') return;
+    const n = Object.values(s.players).filter((p) => p.online || p.score > 0).length;
+    if (n >= 2) reportResult(me, { key: `${code}:${s.game || 'quiz'}:left`, game: s.game || 'quiz', rank: n, players: n, win: false }).then((p) => p && onProfileUpdate && onProfileUpdate(p));
+    onLeave();
+  };
+  const toLobby = async () => {
+    if (await ask({ title: 'Alle zurück in die Lobby?', text: 'Das laufende Spiel endet für alle. Die Punkte bleiben stehen, bis ihr ein neues Spiel startet.', ok: 'Ja, zur Lobby', cancel: 'Weiterspielen' })) room.send('lobby');
   };
 
   let body;
@@ -150,7 +173,7 @@ export default function Room({ code, me, isCreator, game, onLeave, onEditProfile
         <div className="row" style={{ gap: 8 }}>
           <div className="code-pill">{code}</div>
           {isHost && state.phase !== 'lobby' && (
-            <button className="icon-btn" title="Spiel beenden" onClick={() => confirm('Spiel beenden und zurück in die Lobby?') && room.send('lobby')}>🏁</button>
+            <button className="icon-btn" title="Spiel beenden" onClick={toLobby}>🏁</button>
           )}
           <button className="icon-btn" onClick={() => { setMuted(!muted); setM(!muted); }} aria-label="Ton">{muted ? '🔇' : '🔊'}</button>
           <button className="icon-btn" onClick={onEditProfile} aria-label="Profil">✏️</button>

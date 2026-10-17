@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { ask } from '@/lib/dialog';
 import confetti from 'canvas-confetti';
 import Avatar from './Avatar';
 import RevealCard, { SecretWord } from './RevealCard';
@@ -48,7 +49,8 @@ export default function ImposterLocal({ me, onLeave }) {
   };
 
   const leave = () => {
-    if (g.phase === 'setup' || confirm('Spiel wirklich verlassen?')) onLeave();
+    if (g.phase === 'setup') { onLeave(); return; }
+    ask({ title: 'Spiel verlassen?', ok: 'Verlassen', cancel: 'Weiterspielen' }).then((ok) => ok && onLeave());
   };
 
   let body = null;
@@ -126,7 +128,7 @@ export default function ImposterLocal({ me, onLeave }) {
         <button className="icon-btn" onClick={leave} aria-label="Verlassen">←</button>
         <div className="row" style={{ gap: 8 }}>
           <div className="code-pill" style={{ letterSpacing: 1 }}>🕵️ Ein Handy</div>
-          {g.phase !== 'setup' && <button className="icon-btn" title="Runde abbrechen" onClick={() => confirm('Runde abbrechen und zurück zur Spielerliste?') && setG({ phase: 'setup', used: g.used, roundNo: g.roundNo })}>🏁</button>}
+          {g.phase !== 'setup' && <button className="icon-btn" title="Runde abbrechen" onClick={() => ask({ title: 'Runde abbrechen?', text: 'Zurück zur Spielerliste.', ok: 'Abbrechen', cancel: 'Weiterspielen' }).then((ok) => ok && setG({ phase: 'setup', used: g.used, roundNo: g.roundNo }))}>🏁</button>}
           <button className="icon-btn" onClick={() => { setMuted(!muted); setM(!muted); }} aria-label="Ton">{muted ? '🔇' : '🔊'}</button>
         </div>
       </div>
@@ -329,7 +331,7 @@ function LocalResult({ g, players, P, onNext, onSetup, onAcceptGuess }) {
           )) : <b>Kein Imposter in dieser Runde</b>}
         </div>
         {g.outcome === 'crew' && g.guess && !g.guessAccepted && (
-          <button className="btn small ghost" onClick={() => confirm('Geratenes Wort doch als richtig zählen?') && onAcceptGuess()}>Geraten zählt doch ✓</button>
+          <button className="btn small ghost" onClick={() => ask({ title: 'Doch richtig?', text: 'Das geratene Wort als richtig zählen?', ok: 'Ja, zählt', cancel: 'Nein' }).then((ok) => ok && onAcceptGuess())}>Geraten zählt doch ✓</button>
         )}
       </div>
       <WordTable players={g.order.map(P).filter(Boolean)} words={g.words} />

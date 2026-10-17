@@ -686,3 +686,5 @@ button { touch-action: manipulation; }
   background: var(--yellow); color: #2a1600; font-weight: 800; font-size: 15px; padding: 12px 14px; border-radius: 16px;
   border: 3px solid var(--line); box-shadow: 0 6px 0 #a8820e; animation: slideDown .3s both;
 }
+.dialog-overlay { z-index: 120; }
+.dialog-card { max-width: 400px; width: 100%; }

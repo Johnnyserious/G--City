@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { ask } from '@/lib/dialog';
 import { DevBots } from './DevPanel';
 import confetti from 'canvas-confetti';
 import Avatar from './Avatar';
@@ -383,7 +384,7 @@ function ResultPhase({ room, me, isHost }) {
           )) : <b>Kein Imposter in dieser Runde</b>}
         </div>
         {isHost && s.outcome === 'crew' && s.guess && !s.guessAccepted && (
-          <button className="btn small ghost" onClick={() => confirm('Geratenes Wort doch als richtig zählen?') && send('acceptGuess')}>Geraten zählt doch ✓</button>
+          <button className="btn small ghost" onClick={() => ask({ title: 'Doch richtig?', text: 'Das geratene Wort als richtig zählen?', ok: 'Ja, zählt', cancel: 'Nein' }).then((ok) => ok && send('acceptGuess'))}>Geraten zählt doch ✓</button>
         )}
       </div>
 
@@ -413,7 +414,7 @@ function ResultPhase({ room, me, isHost }) {
           <button className="btn big full pink" disabled={onlineIds(s).length < MIN_PLAYERS} onClick={() => { sfx.fanfare(); send('start'); }}>Nächste Runde 🕵️</button>
           <div className="row" style={{ justifyContent: 'center' }}>
             <button className="btn small ghost" onClick={() => setShowSettings(!showSettings)}>⚙️ Einstellungen ({catLabel(s.settings.category)})</button>
-            <button className="btn small ghost" onClick={() => confirm('Zurück in die Lobby? Punkte werden zurückgesetzt.') && send('lobby')}>Lobby</button>
+            <button className="btn small ghost" onClick={() => ask({ title: 'Alle zurück in die Lobby?', text: 'Die Punkte bleiben stehen, bis ihr ein neues Spiel startet.', ok: 'Ja, zur Lobby', cancel: 'Abbrechen' }).then((ok) => ok && send('lobby'))}>Lobby</button>
           </div>
           {showSettings && <div className="card"><ImposterSettings settings={s.settings} playerCount={onlineIds(s).length} onChange={(x) => send('settings', x)} /></div>}
         </div>

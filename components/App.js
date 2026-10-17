@@ -10,6 +10,7 @@ import EstimateLocal from './EstimateLocal';
 import Shop from './Shop';
 import ProfileSetup from './ProfileSetup';
 import UpdateWatcher from './UpdateWatcher';
+import DialogHost from './DialogHost';
 import ProfilePage from './ProfilePage';
 import { haptic } from '@/lib/sound';
 import { loadProfile, storeProfile, fetchProfile, saveRemote, merge } from '@/lib/player';
@@ -37,6 +38,7 @@ export default function App() {
     <>
       <UpdateWatcher inRoom={inRoom} />
       <AppInner />
+      <DialogHost />
     </>
   );
 }

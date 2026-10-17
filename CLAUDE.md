@@ -160,6 +160,12 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - **Haptik:** `haptic()` in `lib/sound.js` (Android `navigator.vibrate`, iPhone über den Schalter-Trick ab iOS 18). Jeder Knopfdruck vibriert kurz (abschaltbar im Profil).
 - **Look:** dunkle Konturen (`--line`), Knöpfe mit Glanzkante und Plopp-Effekt. Hintergrund liegt auf `body::before` (kein `background-attachment: fixed`, das ließ iPhones beim Scrollen springen).
 
+## Verlassen, Lobby, Dialoge
+
+- Keine Browser-`confirm()`-Fenster mehr: `lib/dialog.js` (`ask`, `choose`) + `components/DialogHost.js` (in `App.js`).
+- **Raum verlassen** (← in `Room.js`): in der Lobby sofort; im Spiel Auswahl „Verlassen 👋“ (andere spielen weiter, Host-Übernahme nach 4 s, G-Punkte fürs Mitspielen = Platz letzter, key `…:left`), für den Host zusätzlich „Alle zurück in die Lobby“, oder „Weiterspielen“.
+- **Zurück in die Lobby** setzt die Punkte NICHT mehr zurück (erst beim nächsten Spielstart).
+
 ## Dev-Mode (nur Jonas) + Auftrags-Inbox
 
 - Sichtbar, wenn per Logo-Geste + PIN freigeschaltet (siehe oben) oder wenn Jonas mit **jonas.goldenpost.media@gmail.com** im Shop eingeloggt ist (`lib/dev.js`, Server prüft zusätzlich; weitere Mails per `DEV_EMAILS` in Vercel). Knopf **🛠️** oben in der Spielezentrale → `components/DevPanel.js`.

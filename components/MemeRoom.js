@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { ask } from '@/lib/dialog';
 import { DevBots } from './DevPanel';
 import JokerBag, { ShopToggle } from './JokerBag';
 import confetti from 'canvas-confetti';
@@ -442,7 +443,7 @@ function RoundEnd({ room, me }) {
           )}
           <div className="row" style={{ justifyContent: 'center' }}>
             {final && <button className="btn small ghost" onClick={() => setShowSettings(!showSettings)}>⚙️ Einstellungen</button>}
-            <button className="btn small ghost" onClick={() => confirm('Zurück in die Lobby? Punkte werden zurückgesetzt.') && send('lobby')}>Lobby</button>
+            <button className="btn small ghost" onClick={() => ask({ title: 'Alle zurück in die Lobby?', text: 'Die Punkte bleiben stehen, bis ihr ein neues Spiel startet.', ok: 'Ja, zur Lobby', cancel: 'Abbrechen' }).then((ok) => ok && send('lobby'))}>Lobby</button>
           </div>
           {showSettings && <div className="card"><Settings s={s} send={send} /></div>}
         </div>

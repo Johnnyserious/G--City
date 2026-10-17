@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { ask } from '@/lib/dialog';
 import confetti from 'canvas-confetti';
 import Avatar from './Avatar';
 import { ScoreList } from './ImposterParts';
@@ -76,7 +77,7 @@ export default function EstimateLocal({ me, onLeave }) {
     setG(setupQuestion(g, g.idx + 1));
   };
 
-  const leave = () => (g.phase === 'setup' || confirm('Spiel wirklich verlassen?')) && onLeave();
+  const leave = async () => (g.phase === 'setup' || (await ask({ title: 'Spiel verlassen?', ok: 'Verlassen', cancel: 'Weiterspielen' }))) && onLeave();
   const q = g.qs?.[g.idx];
   const curId = g.turnOrder?.[g.turn];
   const cur = players.find((p) => p.id === curId);
@@ -143,7 +144,7 @@ export default function EstimateLocal({ me, onLeave }) {
         <button className="icon-btn" onClick={leave} aria-label="Verlassen">←</button>
         <div className="row" style={{ gap: 8 }}>
           <div className="code-pill" style={{ letterSpacing: 1 }}>📏 Ein Handy</div>
-          {g.phase !== 'setup' && <button className="icon-btn" title="Spiel abbrechen" onClick={() => confirm('Spiel abbrechen und zurück zur Spielerliste?') && setG({ phase: 'setup' })}>🏁</button>}
+          {g.phase !== 'setup' && <button className="icon-btn" title="Spiel abbrechen" onClick={() => ask({ title: 'Spiel abbrechen?', text: 'Zurück zur Spielerliste.', ok: 'Abbrechen', cancel: 'Weiterspielen' }).then((ok) => ok && setG({ phase: 'setup' }))}>🏁</button>}
           <button className="icon-btn" onClick={() => { setMuted(!muted); setM(!muted); }} aria-label="Ton">{muted ? '🔇' : '🔊'}</button>
         </div>
       </div>

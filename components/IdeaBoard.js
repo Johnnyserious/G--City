@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ask } from '@/lib/dialog';
 import Avatar from './Avatar';
 import { sfx } from '@/lib/sound';
 import { LIMITS } from '@/lib/gameIdeas';
@@ -88,8 +89,8 @@ export default function IdeaBoard({ me, embedded }) {
     }
   };
 
-  const remove = (idea) => {
-    if (!confirm(`Deine Idee „${idea.title}“ löschen?`)) return;
+  const remove = async (idea) => {
+    if (!(await ask({ title: 'Idee löschen?', text: `„${idea.title}“ wird entfernt.`, ok: 'Löschen', cancel: 'Behalten', danger: true }))) return;
     post({ action: 'delete', key: idea.key, author: voter });
   };
 
