@@ -15,3 +15,10 @@ export async function POST(req) {
     return Response.json({ error: String(e.message || e) }, { status: 500 });
   }
 }
+
+// GET /api/songs?cat=deutschrap&n=3 – schneller Check, ob die Hörproben gefunden werden
+export async function GET(req) {
+  const q = new URL(req.url).searchParams;
+  const songs = await pickSongs({ cats: [q.get('cat') || 'alle'], count: Math.min(5, Number(q.get('n')) || 3), exclude: [] });
+  return Response.json({ ok: songs.length > 0, songs: songs.map((s) => ({ artist: s.artist, title: s.title, cover: !!s.cover, preview: s.preview.slice(0, 60) })) });
+}
