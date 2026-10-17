@@ -4,17 +4,38 @@ import Avatar from './Avatar';
 import { useAccount } from '@/lib/account';
 import { isDevEmail, REQUEST_TYPES } from '@/lib/dev';
 import { MOCK } from '@/lib/supabase';
-import { sfx } from '@/lib/sound';
+import { sfx, haptic } from '@/lib/sound';
 
+// Dev-Mode: entweder per PIN freigeschaltet (Schlüssel im Handy gemerkt) oder per Shop-Login mit Jonas' Mail
+const KEY = 'gcity_dev_key';
+export const getDevKey = () => { try { return localStorage.getItem(KEY) || ''; } catch { return ''; } };
+export const setDevKey = (k) => { try { k ? localStorage.setItem(KEY, k) : localStorage.removeItem(KEY); } catch {} window.dispatchEvent(new Event('gcity-dev')); };
 export const useIsDev = () => {
   const acc = useAccount();
-  return !!acc.user && (isDevEmail(acc.user.email) || (MOCK && /jonas/i.test(acc.user.email)));
+  const [key, setKey] = useState('');
+  useEffect(() => {
+    const read = () => setKey(getDevKey());
+    read();
+    window.addEventListener('gcity-dev', read);
+    return () => window.removeEventListener('gcity-dev', read);
+  }, []);
+  return !!key || (!!acc.user && (isDevEmail(acc.user.email) || (MOCK && /jonas/i.test(acc.user.email))));
 };
 
+// PIN prüfen → Schlüssel merken
+export async function unlockWithPin(pin) {
+  const r = await fetch('/api/dev', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'unlock', pin }) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok || !d.key) throw new Error(d.error || 'Falsche PIN');
+  setDevKey(d.key);
+  return true;
+}
+
 async function devApi(token, method, body) {
+  const key = getDevKey();
   const r = await fetch('/api/dev', {
     method,
-    headers: { authorization: 'Bearer ' + token, ...(body ? { 'content-type': 'application/json' } : {}) },
+    headers: { ...(key ? { 'x-dev-key': key } : {}), ...(token ? { authorization: 'Bearer ' + token } : {}), ...(body ? { 'content-type': 'application/json' } : {}) },
     body: body ? JSON.stringify(body) : undefined,
     cache: 'no-store',
   });
@@ -36,26 +57,29 @@ const GAMES = [
   ['bluff', '🤥', 'Lügen-Quiz'], ['emoji', '🦁', 'Emoji'], ['estimate', '📏', 'Schätzen'],
 ];
 
-// Bots in der Lobby (nur Dev + Host)
+// Bots in der Lobby – für jeden Host. Kostet nichts: Bots spielen nach festen Regeln, ohne KI.
 export function DevBots({ room, me }) {
-  const isDev = useIsDev();
   const s = room.state;
-  if (!isDev || s.hostId !== me.id || s.phase !== 'lobby') return null;
+  if (s.hostId !== me.id || s.phase !== 'lobby') return null;
   const botsList = s.order.map((id) => s.players[id]).filter((p) => p?.bot);
+  const full = s.order.length >= 16;
   return (
     <div className="card dev-bots">
-      <div className="row between">
-        <b>🛠️ Dev: Bots zum Testen</b>
-        <button className="btn small teal" onClick={() => { sfx.join(); room.send('addBot'); }}>🤖 Bot hinzufügen</button>
+      <div className="row between" style={{ flexWrap: 'wrap', gap: 8 }}>
+        <div>
+          <b style={{ fontSize: 18 }}>🤖 Gegen Bots spielen</b>
+          <div className="muted" style={{ fontSize: 13, fontWeight: 700 }}>Zu wenige Leute? Bots füllen auf.</div>
+        </div>
+        <button className="btn small teal" disabled={full} onClick={() => { sfx.join(); haptic('tap'); room.send('addBot'); }}>＋ Bot</button>
       </div>
       {botsList.length > 0 && (
-        <div className="row" style={{ flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+        <div className="row" style={{ flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
           {botsList.map((b) => (
-            <span key={b.id} className="bluff-picker"><Avatar avatar={b.avatar} size={22} /> {b.name} <button className="link-btn" style={{ textDecoration: 'none' }} onClick={() => room.send('removeBot', { id: b.id })}>✕</button></span>
+            <span key={b.id} className="bot-chip"><Avatar avatar={b.avatar} size={26} /> {b.name.replace('🤖 ', '')} <button className="bot-x" onClick={() => room.send('removeBot', { id: b.id })} aria-label={'Bot ' + b.name + ' entfernen'}>✕</button></span>
           ))}
         </div>
       )}
-      <div className="muted" style={{ fontSize: 12, fontWeight: 700, marginTop: 6 }}>Nur du siehst das. Bots raten, schreiben und stimmen automatisch ab (malen können sie nicht).</div>
+      {s.game === 'draw' && botsList.length > 0 && <div className="muted" style={{ fontSize: 12, fontWeight: 700, marginTop: 8 }}>Bots raten mit, malen aber nicht – wenn ein Bot dran ist, geht’s direkt weiter.</div>}
     </div>
   );
 }
@@ -73,7 +97,7 @@ export default function DevPanel({ onClose, onCreate }) {
   const [toast, setToast] = useState('');
 
   const load = useCallback(async () => {
-    if (!acc.token) return;
+    if (!acc.token && !getDevKey()) return;
     try {
       const d = await devApi(acc.token, 'GET');
       setItems(d.requests);
@@ -115,13 +139,16 @@ export default function DevPanel({ onClose, onCreate }) {
       <div className="topbar">
         <button className="icon-btn" onClick={onClose} aria-label="Zurück">←</button>
         <div className="logo">G <span>Dev</span></div>
-        <button className="icon-btn" onClick={load} aria-label="Neu laden">🔄</button>
+        <div className="row" style={{ gap: 8 }}>
+          <button className="icon-btn" onClick={load} aria-label="Neu laden">🔄</button>
+          {getDevKey() && <button className="icon-btn" title="Dev-Mode auf diesem Handy sperren" onClick={() => { if (confirm('Dev-Mode auf diesem Handy wieder sperren?')) { setDevKey(''); onClose(); } }}>🔒</button>}
+        </div>
       </div>
 
       <div className="stack">
         <div className="card stack">
           <h3 style={{ fontSize: 24 }}>🤖 Spiele allein testen</h3>
-          <p className="muted" style={{ margin: 0, fontWeight: 700 }}>Raum öffnen, in der Lobby auf <b>„🤖 Bot hinzufügen“</b> tippen – die Bots spielen automatisch mit.</p>
+          <p className="muted" style={{ margin: 0, fontWeight: 700 }}>Raum öffnen, in der Lobby auf <b>„＋ Bot“</b> tippen – die Bots spielen automatisch mit.</p>
           <div className="seg seg-wrap">
             {GAMES.map(([g, icon, name]) => (
               <button key={g} className="seg-btn" onClick={() => { sfx.pick(); onCreate(g); }}>{icon} {name}</button>

@@ -125,14 +125,14 @@ function RevealPhase({ s, me, send, isHost, secret, inGame }) {
   return (
     <div className="stack">
       <h2 className="center" style={{ fontSize: 30 }}>Runde {s.roundNo}: Deine Karte</h2>
-      <p className="center muted" style={{ margin: 0, fontWeight: 700 }}>Handy verdecken, Karte hochziehen, Wort merken.</p>
+      <p className="center muted" style={{ margin: 0, fontWeight: 700 }}>Handy verdecken, Karte antippen, Wort merken.</p>
       <RevealCard
         onRevealed={() => setSeen(true)}
         secret={secret}
         cover={<div className="cover-face"><Avatar avatar={me.avatar} size={110} /><div className="display" style={{ fontSize: 28 }}>{me.name}</div></div>}
       />
       <button className="btn big full green" disabled={!seen || ready} onClick={() => { sfx.vote(); send('ready'); }}>
-        {ready ? 'Bereit ✓ – warte auf die anderen' : seen ? 'Hab’s mir gemerkt ✓' : 'Erst Karte hochziehen ⬆'}
+        {ready ? 'Bereit ✓ – warte auf die anderen' : seen ? 'Hab’s mir gemerkt ✓' : 'Erst Karte aufdecken 👆'}
       </button>
       <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap' }}>
         {inGame.map((p) => (

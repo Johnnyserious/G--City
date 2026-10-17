@@ -5,7 +5,7 @@ import { sfx } from '@/lib/sound';
 import { LIMITS } from '@/lib/gameIdeas';
 
 // Abstimmung über neue Spiele in der Spielezentrale. Jeder kann beliebig viele Ideen antippen und eigene schreiben.
-export default function IdeaBoard({ me }) {
+export default function IdeaBoard({ me, embedded }) {
   const [ideas, setIdeas] = useState(null);
   const [error, setError] = useState('');
   const [open, setOpen] = useState(null); // null = noch nicht entschieden
@@ -46,7 +46,7 @@ export default function IdeaBoard({ me }) {
 
   const myVotes = ideas ? ideas.filter((i) => i.voters.some((v) => v.id === me.id)).length : 0;
   useEffect(() => {
-    if (ideas && open === null) setOpen(myVotes === 0);
+    if (ideas && open === null) setOpen(!!embedded); // zugeklappt – nur auf Wunsch aufklappen
   }, [ideas, open, myVotes]);
 
   const post = async (body) => {
@@ -97,8 +97,8 @@ export default function IdeaBoard({ me }) {
   const maxVotes = ideas ? Math.max(0, ...ideas.map((i) => i.voters.length)) : 0;
 
   return (
-    <div className="card idea-board">
-      <button className="idea-head" onClick={() => { sfx.click(); setOpen(!open); }} aria-expanded={!!open}>
+    <div className={'card idea-board' + (embedded ? ' embedded' : '')}>
+      {!embedded && <button className="idea-head" onClick={() => { sfx.click(); setOpen(!open); }} aria-expanded={!!open}>
         <div>
           <h3 style={{ fontSize: 24 }}>💡 Was bauen wir als Nächstes?</h3>
           <div className="muted" style={{ fontWeight: 700, fontSize: 14 }}>
@@ -106,7 +106,8 @@ export default function IdeaBoard({ me }) {
           </div>
         </div>
         <span className="idea-toggle">{open ? '▲' : '▼'}</span>
-      </button>
+      </button>}
+      {embedded && <div className="muted" style={{ fontWeight: 700, fontSize: 14 }}>{myVotes ? `Du hast ${myVotes} ${myVotes === 1 ? 'Idee' : 'Ideen'} gewählt` : 'Tipp alle Spiele an, die du feiern würdest – so viele du willst.'}</div>}
 
       {open && (
         <div className="stack" style={{ marginTop: 12 }}>

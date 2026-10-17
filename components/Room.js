@@ -15,13 +15,46 @@ import DrawRoom from './DrawRoom';
 import BluffRoom from './BluffRoom';
 import EmojiRoom from './EmojiRoom';
 import EstimateRoom from './EstimateRoom';
+import { useResultReporter } from '@/lib/results';
+import { levelInfo } from '@/lib/player';
+import { haptic } from '@/lib/sound';
 
-export default function Room({ code, me, isCreator, game, onLeave, onEditProfile }) {
+export default function Room({ code, me, isCreator, game, onLeave, onEditProfile, onProfileUpdate }) {
   const room = useRoom({ code, me, isCreator, game });
   const { state, conn } = room;
   const [muted, setM] = useState(isMuted());
   const [toast, setToast] = useState('');
   const prevPlayers = useRef(null);
+  const [reward, setReward] = useState(null);
+  const [gain, setGain] = useState(null);
+  const myScore = useRef(null);
+
+  // Eigene Punkte im Spiel gestiegen → „+N“ fliegt hoch
+  useEffect(() => {
+    const sc = room.state?.players?.[me.id]?.score;
+    if (sc == null) return;
+    if (myScore.current != null && sc > myScore.current && room.state.phase !== 'lobby') {
+      const n = sc - myScore.current;
+      haptic('light');
+      setGain({ n, id: Date.now() });
+      setTimeout(() => setGain((g) => (g && Date.now() - g.id > 1500 ? null : g)), 1700);
+    }
+    myScore.current = sc;
+  }, [room.state, me.id]);
+
+  // Spiel vorbei → Ergebnis ins Profil, dazu „+40 G-Punkte“ einblenden
+  useResultReporter(room.state, me, code, (p, pts) => {
+    const before = levelInfo(me.points || 0).level;
+    const after = levelInfo(p.points || 0).level;
+    onProfileUpdate && onProfileUpdate(p);
+    setTimeout(() => {
+      sfx.coin();
+      haptic(after > before ? 'big' : 'success');
+      if (after > before) setTimeout(() => sfx.levelUp(), 350);
+      setReward({ pts, level: after > before ? after : null, id: Date.now() });
+      setTimeout(() => setReward(null), 3200);
+    }, 1400);
+  });
 
   // Sound + Hinweis, wenn jemand reinkommt
   useEffect(() => {
@@ -104,6 +137,14 @@ export default function Room({ code, me, isCreator, game, onLeave, onEditProfile
   return (
     <div className="wrap">
       {toast && <div className="toast">{toast}</div>}
+      {gain && <div key={gain.id} className="score-pop">+{gain.n}</div>}
+      {reward && (
+        <div key={reward.id} className="reward-pop">
+          <div className="reward-pts">+{reward.pts}</div>
+          <div className="reward-label">G-Punkte</div>
+          {reward.level && <div className="reward-level">Level {reward.level}! 🎉</div>}
+        </div>
+      )}
       <div className="topbar">
         <button className="icon-btn" onClick={leave} aria-label="Verlassen">←</button>
         <div className="row" style={{ gap: 8 }}>

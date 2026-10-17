@@ -62,10 +62,11 @@ export default function ImposterLocal({ me, onLeave }) {
         <div className="center">
           <div className="muted" style={{ fontWeight: 800 }}>Spieler {g.idx + 1} von {players.length}</div>
           <h2 style={{ fontSize: 32 }}>📱 Handy an <span style={{ color: 'var(--yellow)' }}>{p.name}</span></h2>
-          <p className="muted" style={{ margin: '4px 0 0', fontWeight: 700 }}>Nur {p.name} schaut hin. Karte hochziehen, Wort merken, loslassen.</p>
+          <p className="muted" style={{ margin: '4px 0 0', fontWeight: 700 }}>Nur {p.name} schaut hin. Karte antippen, Wort merken, wieder zudecken.</p>
         </div>
         <RevealCard
           key={g.idx}
+          maxOpens={2}
           onRevealed={() => up({ seen: true })}
           secret={<SecretWord imposter={g.imposters.includes(p.id)} word={g.secret.word} tip={g.secret.tip} category={g.secret.icon + ' ' + g.secret.category} />}
           cover={<div className="cover-face"><Avatar avatar={p.avatar} size={110} /><div className="display" style={{ fontSize: 30 }}>{p.name}</div></div>}
@@ -79,7 +80,7 @@ export default function ImposterLocal({ me, onLeave }) {
             else up({ idx: g.idx + 1, seen: false });
           }}
         >
-          {!g.seen ? 'Erst Karte hochziehen ⬆' : last ? 'Alle haben gesehen – los geht’s ➜' : `Gemerkt ✓ – weiter an ${next.name}`}
+          {!g.seen ? 'Erst Karte aufdecken 👆' : last ? 'Alle haben gesehen – los geht’s ➜' : `Gemerkt ✓ – weiter an ${next.name}`}
         </button>
       </div>
     );
