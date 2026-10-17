@@ -53,6 +53,7 @@ Nach jeder Änderung an den Variablen ist in Vercel ein **Redeploy** nötig.
 - **Thinking:** Neuere Claude-Modelle denken standardmäßig erst nach. Das verbraucht `max_tokens`, und dann kommt kein Text zurück ("Keine JSON-Antwort"). `lib/claude.js` sendet deshalb immer `thinking: { type: 'disabled' }`. Lehnt ein Modell das ab, wird ohne den Parameter und mit mehr Tokens wiederholt.
 - `extractJson` verträgt ```json-Blöcke, Text drumherum und Kommas vor einer schließenden Klammer.
 - Umgebungsvariablen werden gesäubert: Leerzeichen, Anführungszeichen und `NAME=`-Präfixe werden entfernt.
+- **Automatische Updates:** `next.config.mjs` backt die Commit-ID (`VERCEL_GIT_COMMIT_SHA`) als `NEXT_PUBLIC_BUILD_ID` ein, `GET /api/version` liefert die aktuelle. `components/UpdateWatcher.js` prüft jede Minute + beim Zurückkommen in die App: außerhalb eines Raums sofort neu laden, im Raum gelbe Leiste „Neues Update – tippen“. Startseite `/` wird nie gecacht. Lokal ohne Vercel-Variable ist die Prüfung aus.
 - Vercel-Links mit Zufallsbuchstaben (`g-city-abc123-…vercel.app`) zeigen immer nur **eine alte Version**. Richtig ist `g-city.vercel.app`.
 - Beim Hochladen über die GitHub-Weboberfläche gehen Ordner verloren. Deshalb immer per git pushen.
 

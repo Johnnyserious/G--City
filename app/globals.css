@@ -681,3 +681,8 @@ button { touch-action: manipulation; }
 .me-btn { position: relative; background: none; padding: 0; border-radius: 50%; transition: transform .12s cubic-bezier(.3,1.6,.5,1); }
 .me-btn .avatar { border: 3px solid var(--line); box-shadow: 0 4px 0 #160e45; }
 .me-btn:active { transform: scale(.9); }
+.update-bar {
+  position: fixed; top: calc(10px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); z-index: 99; width: min(520px, calc(100vw - 24px));
+  background: var(--yellow); color: #2a1600; font-weight: 800; font-size: 15px; padding: 12px 14px; border-radius: 16px;
+  border: 3px solid var(--line); box-shadow: 0 6px 0 #a8820e; animation: slideDown .3s both;
+}

@@ -9,6 +9,7 @@ import BluffLocal from './BluffLocal';
 import EstimateLocal from './EstimateLocal';
 import Shop from './Shop';
 import ProfileSetup from './ProfileSetup';
+import UpdateWatcher from './UpdateWatcher';
 import ProfilePage from './ProfilePage';
 import { haptic } from '@/lib/sound';
 import { loadProfile, storeProfile, fetchProfile, saveRemote, merge } from '@/lib/player';
@@ -23,7 +24,24 @@ function readRoom() {
   return r ? r.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4) : null;
 }
 
+// Update-Prüfung läuft auf jedem Bildschirm (auch beim Profil-Popup)
 export default function App() {
+  const [inRoom, setInRoom] = useState(() => !!readRoom());
+  useEffect(() => {
+    const upd = () => setInRoom(!!readRoom());
+    window.addEventListener('popstate', upd);
+    const t = setInterval(upd, 2000);
+    return () => { window.removeEventListener('popstate', upd); clearInterval(t); };
+  }, []);
+  return (
+    <>
+      <UpdateWatcher inRoom={inRoom} />
+      <AppInner />
+    </>
+  );
+}
+
+function AppInner() {
   const [profile, setProfile] = useState(loadProfile);
   const [editing, setEditing] = useState(false);
   const [room, setRoom] = useState(readRoom);
