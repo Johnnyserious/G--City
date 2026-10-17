@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Avatar from './Avatar';
 import { sfx, haptic, hapticsEnabled, setHaptics } from '@/lib/sound';
 import { fetchProfile, levelInfo, titleFor, G_POINTS } from '@/lib/player';
+import { passkeysSupported, passkeyLabel, registerPasskey } from '@/lib/passkeyClient';
 
 const GAME_NAMES = {
   quiz: ['🧠', 'Quiz-Board'], imposter: ['🕵️', 'Imposter'], meme: ['😂', 'Make it Meme'], draw: ['🎨', 'Zeichenspiel'],
@@ -14,6 +15,24 @@ export default function ProfilePage({ me, onClose, onEdit, onUpdate }) {
   const [p, setP] = useState(me);
   const [vib, setVib] = useState(hapticsEnabled());
   const [showCode, setShowCode] = useState(false);
+  const [pkMsg, setPkMsg] = useState('');
+  const [pkBusy, setPkBusy] = useState(false);
+  const fid = passkeyLabel();
+  const setupFace = async () => {
+    setPkBusy(true);
+    setPkMsg('');
+    try {
+      await registerPasskey(p.id);
+      setP((x) => ({ ...x, passkeys: (x.passkeys || 0) + 1 }));
+      setPkMsg(`✅ ${fid} ist eingerichtet`);
+      sfx.correct();
+      haptic('success');
+    } catch (e) {
+      setPkMsg(String(e.message || e));
+    } finally {
+      setPkBusy(false);
+    }
+  };
   useEffect(() => {
     if (!me.registered) return;
     fetchProfile(me.id).then((r) => { if (r) { setP((x) => ({ ...x, ...r })); onUpdate && onUpdate(r); } }).catch(() => {});
@@ -83,6 +102,16 @@ export default function ProfilePage({ me, onClose, onEdit, onUpdate }) {
           <span style={{ fontWeight: 800 }}>📳 Vibration</span>
           <input type="checkbox" checked={vib} onChange={(e) => { setVib(e.target.checked); setHaptics(e.target.checked); if (e.target.checked) haptic('success'); }} />
         </label>
+        {p.registered && passkeysSupported() && (
+          <div>
+            <div style={{ fontWeight: 800 }}>😎 Anmelden mit {fid}</div>
+            <div className="muted" style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>
+              {p.passkeys ? `Eingerichtet auf ${p.passkeys} ${p.passkeys === 1 ? 'Gerät' : 'Geräten'}. Auf einem neuen Handy oder nach dem Neu-Anlegen der App einfach „Anmelden mit ${fid}“ tippen.` : `Statt Code: ein Blick ins Handy und du bist drin. Dein Gesicht bzw. Finger bleibt auf dem Handy.`}
+            </div>
+            <button className="btn teal small" disabled={pkBusy} onClick={setupFace}>{pkBusy ? '…' : p.passkeys ? `Auf diesem Gerät neu einrichten` : `${fid} einrichten`}</button>
+            {pkMsg && <div className="muted" style={{ fontWeight: 800, marginTop: 8 }}>{pkMsg}</div>}
+          </div>
+        )}
         {p.registered && (
           <div>
             <div style={{ fontWeight: 800 }}>📱 Code für ein neues Handy</div>

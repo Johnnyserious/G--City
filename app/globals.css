@@ -688,3 +688,6 @@ button { touch-action: manipulation; }
 }
 .dialog-overlay { z-index: 120; }
 .dialog-card { max-width: 400px; width: 100%; }
+.pk-box { background: #120b30; border: 3px solid var(--teal); border-radius: 18px; padding: 14px; text-align: center; }
+.welcome-card h1 { line-height: 1.1; }
+.welcome-card .avatar { border: 4px solid var(--line); animation: popIn .5s cubic-bezier(.3,1.6,.5,1) both; }

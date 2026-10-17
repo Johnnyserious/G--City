@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIsDev, unlockWithPin } from './DevPanel';
 import Avatar from './Avatar';
 import IdeaBoard from './IdeaBoard';
@@ -34,7 +34,16 @@ export default function GameCenter({ me, onEdit, onProfile, onCreate, onJoin, on
   const [pinAsk, setPinAsk] = useState(false);
   const [pin, setPin] = useState('');
   const [pinErr, setPinErr] = useState('');
-  const [toast, setToast] = useState('');
+  const [toast, setToast] = useState(() => {
+    // Einmal pro Besuch: „Willkommen zurück“
+    try {
+      if (sessionStorage.getItem('gc_welcomed')) return '';
+      sessionStorage.setItem('gc_welcomed', '1');
+      const old = me.createdAt && Date.now() - new Date(me.createdAt).getTime() > 10 * 60000;
+      return me.registered && old ? `Willkommen zurück, ${me.name}! 👋` : '';
+    } catch { return ''; }
+  });
+  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(''), 2600); return () => clearTimeout(t); }, [toast]);
   const taps = useRef([]);
   const lv = levelInfo(me.points || 0);
 

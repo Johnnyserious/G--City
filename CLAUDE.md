@@ -160,6 +160,14 @@ Jeder Tab ist ein eigener Spieler. Playwright/Chromium ist für automatische Tes
 - **Haptik:** `haptic()` in `lib/sound.js` (Android `navigator.vibrate`, iPhone über den Schalter-Trick ab iOS 18). Jeder Knopfdruck vibriert kurz (abschaltbar im Profil).
 - **Look:** dunkle Konturen (`--line`), Knöpfe mit Glanzkante und Plopp-Effekt. Hintergrund liegt auf `body::before` (kein `background-attachment: fixed`, das ließ iPhones beim Scrollen springen).
 
+## Anmelden mit Face ID / Fingerabdruck (Passkeys)
+
+- `lib/passkeys.js` (Server, `@simplewebauthn/server`), `lib/passkeyClient.js` (Browser), API `POST /api/passkey` (regOptions, regVerify, authOptions, authVerify).
+- Öffentliche Schlüssel liegen in `profiles.stats._pk` (max. 5 Geräte) – **kein eigenes SQL**. `pub()` in `lib/profiles.js` filtert `_`-Felder raus, gibt nur `passkeys` (Anzahl) zurück.
+- Challenge wird mit HMAC (Secret Key) signiert an den Browser gegeben (5 Min. gültig), kein Speicher nötig. rpID = aufgerufene Domain → Passkeys gelten nur auf **g-city.vercel.app** (nicht auf Vorschau-Links).
+- Einrichten: nach dem Profil-Erstellen (Code-Bildschirm) oder im Profil → Einstellungen. Anmelden: Startbildschirm „😎 Anmelden mit Face ID“ → „Willkommen zurück, Name“. Code bleibt als Notlösung.
+- Testen in Playwright mit virtuellem Authenticator (CDP `WebAuthn.addVirtualAuthenticator`).
+
 ## Verlassen, Lobby, Dialoge
 
 - Keine Browser-`confirm()`-Fenster mehr: `lib/dialog.js` (`ask`, `choose`) + `components/DialogHost.js` (in `App.js`).
